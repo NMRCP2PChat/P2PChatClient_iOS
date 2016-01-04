@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
+#import <AVFoundation/AVFoundation.h>
+#import "AsyncUdpSocket.h"
+@class AudioCenter;
+@class MessageProtocal;
+@class DataManager;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -20,6 +25,10 @@
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 
+@property (strong, nonatomic) AsyncUdpSocket *udpSocket;
+@property (strong, nonatomic) DataManager *dataManager;
+@property (strong, nonatomic) AudioCenter *audioCenter;
+@property (strong, nonatomic) MessageProtocal *messageProtocal;
 
 @end
 

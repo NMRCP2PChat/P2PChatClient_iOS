@@ -7,9 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA9046A21C3A49AA009E75B7 /* Friend+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046971C3A49AA009E75B7 /* Friend+CoreDataProperties.m */; };
+		DA9046A31C3A49AA009E75B7 /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046991C3A49AA009E75B7 /* Friend.m */; };
+		DA9046A41C3A49AA009E75B7 /* Message+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = DA90469B1C3A49AA009E75B7 /* Message+CoreDataProperties.m */; };
+		DA9046A51C3A49AA009E75B7 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = DA90469D1C3A49AA009E75B7 /* Message.m */; };
+		DA9046A61C3A49AA009E75B7 /* LastMessage+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = DA90469F1C3A49AA009E75B7 /* LastMessage+CoreDataProperties.m */; };
+		DA9046A71C3A49AA009E75B7 /* LastMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046A11C3A49AA009E75B7 /* LastMessage.m */; };
+		DA9046AA1C3A49EB009E75B7 /* DataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046A91C3A49EB009E75B7 /* DataManager.m */; };
+		DA9046B51C3A51A1009E75B7 /* AudioCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046AE1C3A51A1009E75B7 /* AudioCenter.m */; };
+		DA9046B61C3A51A1009E75B7 /* MessageProtocal.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046B01C3A51A1009E75B7 /* MessageProtocal.m */; };
+		DA9046B71C3A51A1009E75B7 /* MyFetchedResultsControllerDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046B21C3A51A1009E75B7 /* MyFetchedResultsControllerDelegate.m */; };
+		DA9046B81C3A51A1009E75B7 /* Tool.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046B41C3A51A1009E75B7 /* Tool.m */; };
+		DA9046BC1C3A525F009E75B7 /* AsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046BB1C3A525F009E75B7 /* AsyncUdpSocket.m */; };
+		DA9046BF1C3A5601009E75B7 /* 0.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9046BD1C3A5601009E75B7 /* 0.png */; };
+		DA9046C01C3A5601009E75B7 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = DA9046BE1C3A5601009E75B7 /* 1.png */; };
+		DA9046C41C3A663D009E75B7 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046C31C3A663D009E75B7 /* LoginViewController.m */; };
+		DA9046C71C3A6668009E75B7 /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046C61C3A6668009E75B7 /* RegisterViewController.m */; };
+		DA9046CA1C3A668C009E75B7 /* FriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046C91C3A668C009E75B7 /* FriendsViewController.m */; };
+		DA9046CD1C3A6698009E75B7 /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046CC1C3A6698009E75B7 /* ChatViewController.m */; };
 		DA95D5971C3A16E6001ED1A6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DA95D5961C3A16E6001ED1A6 /* main.m */; };
 		DA95D59A1C3A16E6001ED1A6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DA95D5991C3A16E6001ED1A6 /* AppDelegate.m */; };
-		DA95D59D1C3A16E6001ED1A6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DA95D59C1C3A16E6001ED1A6 /* ViewController.m */; };
+		DA95D59D1C3A16E6001ED1A6 /* RecentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DA95D59C1C3A16E6001ED1A6 /* RecentViewController.m */; };
 		DA95D5A01C3A16E6001ED1A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA95D59E1C3A16E6001ED1A6 /* Main.storyboard */; };
 		DA95D5A31C3A16E6001ED1A6 /* p2pChat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DA95D5A11C3A16E6001ED1A6 /* p2pChat.xcdatamodeld */; };
 		DA95D5A51C3A16E6001ED1A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA95D5A41C3A16E6001ED1A6 /* Assets.xcassets */; };
@@ -36,12 +54,46 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DA9046961C3A49AA009E75B7 /* Friend+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Friend+CoreDataProperties.h"; path = "dataStorage/Friend+CoreDataProperties.h"; sourceTree = "<group>"; };
+		DA9046971C3A49AA009E75B7 /* Friend+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Friend+CoreDataProperties.m"; path = "dataStorage/Friend+CoreDataProperties.m"; sourceTree = "<group>"; };
+		DA9046981C3A49AA009E75B7 /* Friend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Friend.h; path = dataStorage/Friend.h; sourceTree = "<group>"; };
+		DA9046991C3A49AA009E75B7 /* Friend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Friend.m; path = dataStorage/Friend.m; sourceTree = "<group>"; };
+		DA90469A1C3A49AA009E75B7 /* Message+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Message+CoreDataProperties.h"; path = "dataStorage/Message+CoreDataProperties.h"; sourceTree = "<group>"; };
+		DA90469B1C3A49AA009E75B7 /* Message+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Message+CoreDataProperties.m"; path = "dataStorage/Message+CoreDataProperties.m"; sourceTree = "<group>"; };
+		DA90469C1C3A49AA009E75B7 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Message.h; path = dataStorage/Message.h; sourceTree = "<group>"; };
+		DA90469D1C3A49AA009E75B7 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Message.m; path = dataStorage/Message.m; sourceTree = "<group>"; };
+		DA90469E1C3A49AA009E75B7 /* LastMessage+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "LastMessage+CoreDataProperties.h"; path = "dataStorage/LastMessage+CoreDataProperties.h"; sourceTree = "<group>"; };
+		DA90469F1C3A49AA009E75B7 /* LastMessage+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "LastMessage+CoreDataProperties.m"; path = "dataStorage/LastMessage+CoreDataProperties.m"; sourceTree = "<group>"; };
+		DA9046A01C3A49AA009E75B7 /* LastMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LastMessage.h; path = dataStorage/LastMessage.h; sourceTree = "<group>"; };
+		DA9046A11C3A49AA009E75B7 /* LastMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LastMessage.m; path = dataStorage/LastMessage.m; sourceTree = "<group>"; };
+		DA9046A81C3A49EB009E75B7 /* DataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataManager.h; path = dataStorage/DataManager.h; sourceTree = "<group>"; };
+		DA9046A91C3A49EB009E75B7 /* DataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DataManager.m; path = dataStorage/DataManager.m; sourceTree = "<group>"; };
+		DA9046AD1C3A51A1009E75B7 /* AudioCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioCenter.h; path = Tool/AudioCenter.h; sourceTree = "<group>"; };
+		DA9046AE1C3A51A1009E75B7 /* AudioCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AudioCenter.m; path = Tool/AudioCenter.m; sourceTree = "<group>"; };
+		DA9046AF1C3A51A1009E75B7 /* MessageProtocal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageProtocal.h; path = Tool/MessageProtocal.h; sourceTree = "<group>"; };
+		DA9046B01C3A51A1009E75B7 /* MessageProtocal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MessageProtocal.m; path = Tool/MessageProtocal.m; sourceTree = "<group>"; };
+		DA9046B11C3A51A1009E75B7 /* MyFetchedResultsControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyFetchedResultsControllerDelegate.h; path = Tool/MyFetchedResultsControllerDelegate.h; sourceTree = "<group>"; };
+		DA9046B21C3A51A1009E75B7 /* MyFetchedResultsControllerDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyFetchedResultsControllerDelegate.m; path = Tool/MyFetchedResultsControllerDelegate.m; sourceTree = "<group>"; };
+		DA9046B31C3A51A1009E75B7 /* Tool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tool.h; path = Tool/Tool.h; sourceTree = "<group>"; };
+		DA9046B41C3A51A1009E75B7 /* Tool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Tool.m; path = Tool/Tool.m; sourceTree = "<group>"; };
+		DA9046BA1C3A525F009E75B7 /* AsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncUdpSocket.h; path = framework/AsyncUdpSocket.h; sourceTree = "<group>"; };
+		DA9046BB1C3A525F009E75B7 /* AsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AsyncUdpSocket.m; path = framework/AsyncUdpSocket.m; sourceTree = "<group>"; };
+		DA9046BD1C3A5601009E75B7 /* 0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 0.png; path = img/0.png; sourceTree = "<group>"; };
+		DA9046BE1C3A5601009E75B7 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 1.png; path = img/1.png; sourceTree = "<group>"; };
+		DA9046C21C3A663D009E75B7 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		DA9046C31C3A663D009E75B7 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
+		DA9046C51C3A6668009E75B7 /* RegisterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterViewController.h; sourceTree = "<group>"; };
+		DA9046C61C3A6668009E75B7 /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterViewController.m; sourceTree = "<group>"; };
+		DA9046C81C3A668C009E75B7 /* FriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendsViewController.h; sourceTree = "<group>"; };
+		DA9046C91C3A668C009E75B7 /* FriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendsViewController.m; sourceTree = "<group>"; };
+		DA9046CB1C3A6698009E75B7 /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
+		DA9046CC1C3A6698009E75B7 /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
 		DA95D5921C3A16E6001ED1A6 /* p2pChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = p2pChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA95D5961C3A16E6001ED1A6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DA95D5981C3A16E6001ED1A6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		DA95D5991C3A16E6001ED1A6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		DA95D59B1C3A16E6001ED1A6 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		DA95D59C1C3A16E6001ED1A6 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		DA95D59B1C3A16E6001ED1A6 /* RecentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecentViewController.h; sourceTree = "<group>"; };
+		DA95D59C1C3A16E6001ED1A6 /* RecentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecentViewController.m; sourceTree = "<group>"; };
 		DA95D59F1C3A16E6001ED1A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DA95D5A21C3A16E6001ED1A6 /* p2pChat.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = p2pChat.xcdatamodel; sourceTree = "<group>"; };
 		DA95D5A41C3A16E6001ED1A6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -80,6 +132,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DA9046B91C3A51A8009E75B7 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				DA9046AD1C3A51A1009E75B7 /* AudioCenter.h */,
+				DA9046AE1C3A51A1009E75B7 /* AudioCenter.m */,
+				DA9046AF1C3A51A1009E75B7 /* MessageProtocal.h */,
+				DA9046B01C3A51A1009E75B7 /* MessageProtocal.m */,
+				DA9046B11C3A51A1009E75B7 /* MyFetchedResultsControllerDelegate.h */,
+				DA9046B21C3A51A1009E75B7 /* MyFetchedResultsControllerDelegate.m */,
+				DA9046B31C3A51A1009E75B7 /* Tool.h */,
+				DA9046B41C3A51A1009E75B7 /* Tool.m */,
+			);
+			name = Tools;
+			sourceTree = "<group>";
+		};
+		DA9046C11C3A645A009E75B7 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				DA95D59B1C3A16E6001ED1A6 /* RecentViewController.h */,
+				DA95D59C1C3A16E6001ED1A6 /* RecentViewController.m */,
+				DA9046C81C3A668C009E75B7 /* FriendsViewController.h */,
+				DA9046C91C3A668C009E75B7 /* FriendsViewController.m */,
+				DA9046C21C3A663D009E75B7 /* LoginViewController.h */,
+				DA9046C31C3A663D009E75B7 /* LoginViewController.m */,
+				DA9046C51C3A6668009E75B7 /* RegisterViewController.h */,
+				DA9046C61C3A6668009E75B7 /* RegisterViewController.m */,
+				DA9046CB1C3A6698009E75B7 /* ChatViewController.h */,
+				DA9046CC1C3A6698009E75B7 /* ChatViewController.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		DA95D5891C3A16E6001ED1A6 = {
 			isa = PBXGroup;
 			children = (
@@ -105,13 +189,10 @@
 			children = (
 				DA95D5981C3A16E6001ED1A6 /* AppDelegate.h */,
 				DA95D5991C3A16E6001ED1A6 /* AppDelegate.m */,
-				DA95D59B1C3A16E6001ED1A6 /* ViewController.h */,
-				DA95D59C1C3A16E6001ED1A6 /* ViewController.m */,
+				DA9046C11C3A645A009E75B7 /* Views */,
 				DA95D59E1C3A16E6001ED1A6 /* Main.storyboard */,
-				DA95D5A41C3A16E6001ED1A6 /* Assets.xcassets */,
-				DA95D5A61C3A16E6001ED1A6 /* LaunchScreen.storyboard */,
-				DA95D5A91C3A16E6001ED1A6 /* Info.plist */,
-				DA95D5A11C3A16E6001ED1A6 /* p2pChat.xcdatamodeld */,
+				DA9046B91C3A51A8009E75B7 /* Tools */,
+				DA95D5CE1C3A1F11001ED1A6 /* DataStorage */,
 				DA95D5951C3A16E6001ED1A6 /* Supporting Files */,
 			);
 			path = p2pChat;
@@ -120,7 +201,14 @@
 		DA95D5951C3A16E6001ED1A6 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				DA9046BA1C3A525F009E75B7 /* AsyncUdpSocket.h */,
+				DA9046BB1C3A525F009E75B7 /* AsyncUdpSocket.m */,
 				DA95D5961C3A16E6001ED1A6 /* main.m */,
+				DA95D5A41C3A16E6001ED1A6 /* Assets.xcassets */,
+				DA95D5A61C3A16E6001ED1A6 /* LaunchScreen.storyboard */,
+				DA9046BD1C3A5601009E75B7 /* 0.png */,
+				DA9046BE1C3A5601009E75B7 /* 1.png */,
+				DA95D5A91C3A16E6001ED1A6 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -141,6 +229,28 @@
 				DA95D5BF1C3A16E6001ED1A6 /* Info.plist */,
 			);
 			path = p2pChatUITests;
+			sourceTree = "<group>";
+		};
+		DA95D5CE1C3A1F11001ED1A6 /* DataStorage */ = {
+			isa = PBXGroup;
+			children = (
+				DA9046A81C3A49EB009E75B7 /* DataManager.h */,
+				DA9046A91C3A49EB009E75B7 /* DataManager.m */,
+				DA95D5A11C3A16E6001ED1A6 /* p2pChat.xcdatamodeld */,
+				DA9046961C3A49AA009E75B7 /* Friend+CoreDataProperties.h */,
+				DA9046971C3A49AA009E75B7 /* Friend+CoreDataProperties.m */,
+				DA9046981C3A49AA009E75B7 /* Friend.h */,
+				DA9046991C3A49AA009E75B7 /* Friend.m */,
+				DA90469A1C3A49AA009E75B7 /* Message+CoreDataProperties.h */,
+				DA90469B1C3A49AA009E75B7 /* Message+CoreDataProperties.m */,
+				DA90469C1C3A49AA009E75B7 /* Message.h */,
+				DA90469D1C3A49AA009E75B7 /* Message.m */,
+				DA90469E1C3A49AA009E75B7 /* LastMessage+CoreDataProperties.h */,
+				DA90469F1C3A49AA009E75B7 /* LastMessage+CoreDataProperties.m */,
+				DA9046A01C3A49AA009E75B7 /* LastMessage.h */,
+				DA9046A11C3A49AA009E75B7 /* LastMessage.m */,
+			);
+			name = DataStorage;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,9 +359,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA9046BF1C3A5601009E75B7 /* 0.png in Resources */,
 				DA95D5A81C3A16E6001ED1A6 /* LaunchScreen.storyboard in Resources */,
 				DA95D5A51C3A16E6001ED1A6 /* Assets.xcassets in Resources */,
 				DA95D5A01C3A16E6001ED1A6 /* Main.storyboard in Resources */,
+				DA9046C01C3A5601009E75B7 /* 1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,10 +388,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA95D59D1C3A16E6001ED1A6 /* ViewController.m in Sources */,
+				DA9046A61C3A49AA009E75B7 /* LastMessage+CoreDataProperties.m in Sources */,
+				DA9046B71C3A51A1009E75B7 /* MyFetchedResultsControllerDelegate.m in Sources */,
+				DA9046CD1C3A6698009E75B7 /* ChatViewController.m in Sources */,
+				DA9046CA1C3A668C009E75B7 /* FriendsViewController.m in Sources */,
+				DA9046AA1C3A49EB009E75B7 /* DataManager.m in Sources */,
+				DA95D59D1C3A16E6001ED1A6 /* RecentViewController.m in Sources */,
+				DA9046A71C3A49AA009E75B7 /* LastMessage.m in Sources */,
+				DA9046A31C3A49AA009E75B7 /* Friend.m in Sources */,
+				DA9046B61C3A51A1009E75B7 /* MessageProtocal.m in Sources */,
+				DA9046C41C3A663D009E75B7 /* LoginViewController.m in Sources */,
 				DA95D59A1C3A16E6001ED1A6 /* AppDelegate.m in Sources */,
 				DA95D5A31C3A16E6001ED1A6 /* p2pChat.xcdatamodeld in Sources */,
 				DA95D5971C3A16E6001ED1A6 /* main.m in Sources */,
+				DA9046A21C3A49AA009E75B7 /* Friend+CoreDataProperties.m in Sources */,
+				DA9046BC1C3A525F009E75B7 /* AsyncUdpSocket.m in Sources */,
+				DA9046C71C3A6668009E75B7 /* RegisterViewController.m in Sources */,
+				DA9046A51C3A49AA009E75B7 /* Message.m in Sources */,
+				DA9046B51C3A51A1009E75B7 /* AudioCenter.m in Sources */,
+				DA9046A41C3A49AA009E75B7 /* Message+CoreDataProperties.m in Sources */,
+				DA9046B81C3A51A1009E75B7 /* Tool.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -505,6 +633,7 @@
 				DA95D5C41C3A16E6001ED1A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DA95D5C51C3A16E6001ED1A6 /* Build configuration list for PBXNativeTarget "p2pChatTests" */ = {
 			isa = XCConfigurationList;
@@ -513,6 +642,7 @@
 				DA95D5C71C3A16E6001ED1A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DA95D5C81C3A16E6001ED1A6 /* Build configuration list for PBXNativeTarget "p2pChatUITests" */ = {
 			isa = XCConfigurationList;
@@ -521,6 +651,7 @@
 				DA95D5CA1C3A16E6001ED1A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
