@@ -25,7 +25,7 @@
     _audioCenter = [[AudioCenter alloc]init];
     _messageProtocal = [[MessageProtocal alloc]init];
     _dataManager = [[DataManager alloc]init];
-    _dataManager.context = _managedObjectContext;
+//    _dataManager.context = _managedObjectContext;// 此时_managedObjectContext为nil
     
     //
     //    NSString *path2 = [[NSBundle mainBundle]pathForResource:@"0" ofType:@"png"];
@@ -34,9 +34,10 @@
     if ([[NSUserDefaults standardUserDefaults]stringForKey:@"name"] == nil) {
         [[NSUserDefaults standardUserDefaults]setObject:@"xiaoming" forKey:@"name"];
         [[NSUserDefaults standardUserDefaults]setObject:[NSNumber numberWithUnsignedShort:121] forKey:@"id"];
-        NSString *path = [[NSBundle mainBundle]pathForResource:@"1" ofType:@"png"];
-        [[NSUserDefaults standardUserDefaults]setObject:path forKey:@"photoPath"];
     }
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"photoPath"];
+    NSString *path = [[NSBundle mainBundle]pathForResource:@"1" ofType:@"png"];
+    [[NSUserDefaults standardUserDefaults]setObject:path forKey:@"photoPath"];
     
     NSError *audioSessionError = nil;
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
@@ -125,6 +126,53 @@
             abort();
         }
     }
+}
+
+#pragma mark - async udp socket delegate
+- (void)onUdpSocket:(AsyncUdpSocket *)sock didSendDataWithTag:(long)tag {
+    NSLog(@"didSendDataWithTag");
+}
+
+- (void)onUdpSocket:(AsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error {
+    NSLog(@"didNotSendDataWithTag");
+}
+
+- (BOOL)onUdpSocket:(AsyncUdpSocket *)sock
+     didReceiveData:(NSData *)data
+            withTag:(long)tag
+           fromHost:(NSString *)host
+               port:(UInt16)port {
+    NSLog(@"%@", host);
+    if (_dataManager.context == nil) {
+        _dataManager.context = _managedObjectContext;
+    }
+    //解析data，存储message
+    MessageProtocalType type = [_messageProtocal getMessageType:data];
+//    unsigned short userId = [_messageProtocal getUserID:data];
+    NSData *bodyData = [_messageProtocal getBodyData:data];
+    
+    switch (type) {
+        case MessageProtocalTypeMessage:
+            [_dataManager saveMessageWithUserID:[NSNumber numberWithUnsignedShort:234] time:[NSDate date] body:[[NSString alloc]initWithData:bodyData encoding:NSUTF8StringEncoding] isOut:NO];
+            break;
+        case MessageProtocalTypeRecord:
+        case MessageProtocalTypePicture:
+        case MessageProtocalTypeFile:
+        case MessageProtocalTypeAudio:
+        case MessageProtocalTypeVideo:
+        default:
+            break;
+    }
+    [sock receiveWithTimeout:-1 tag:0];
+    return YES;
+}
+
+- (void)onUdpSocket:(AsyncUdpSocket *)sock didNotReceiveDataWithTag:(long)tag dueToError:(NSError *)error {
+    NSLog(@"didNotReceiveDataWithTag");
+}
+
+- (void)onUdpSocketDidClose:(AsyncUdpSocket *)sock {
+    NSLog(@"DidClose");
 }
 
 @end

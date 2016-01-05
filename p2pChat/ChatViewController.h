@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+@class Friend;
 
 @interface ChatViewController : UIViewController
+
+@property (strong, nonatomic) NSString *ipStr;
+@property (strong, nonatomic) Friend *friendInfo;
 
 @end

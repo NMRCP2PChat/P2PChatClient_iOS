@@ -64,7 +64,7 @@
     NSArray *sections = _controller.sections;
     if (sections.count <= 0) return;
     id<NSFetchedResultsSectionInfo> sectionInfo = sections[0];
-    if (sectionInfo.numberOfObjects > 5) {
+    if (sectionInfo.numberOfObjects > 1) {
         [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:sectionInfo.numberOfObjects - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
 }

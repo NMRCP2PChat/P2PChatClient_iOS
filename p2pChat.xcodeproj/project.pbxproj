@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA258D271C3B6E8E00AED768 /* FriendMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA258D211C3B6E8E00AED768 /* FriendMessageCell.xib */; };
+		DA258D281C3B6E8E00AED768 /* FriendRecordCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA258D221C3B6E8E00AED768 /* FriendRecordCell.xib */; };
+		DA258D2A1C3B6E8E00AED768 /* MyMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA258D251C3B6E8E00AED768 /* MyMessageCell.xib */; };
+		DA258D2B1C3B6E8E00AED768 /* MyRecordCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA258D261C3B6E8E00AED768 /* MyRecordCell.xib */; };
+		DA258D2F1C3B6F2E00AED768 /* MessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DA258D2E1C3B6F2E00AED768 /* MessageCell.m */; };
 		DA9046A21C3A49AA009E75B7 /* Friend+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046971C3A49AA009E75B7 /* Friend+CoreDataProperties.m */; };
 		DA9046A31C3A49AA009E75B7 /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046991C3A49AA009E75B7 /* Friend.m */; };
 		DA9046A41C3A49AA009E75B7 /* Message+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = DA90469B1C3A49AA009E75B7 /* Message+CoreDataProperties.m */; };
@@ -54,6 +59,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DA258D211C3B6E8E00AED768 /* FriendMessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FriendMessageCell.xib; path = cells/FriendMessageCell.xib; sourceTree = "<group>"; };
+		DA258D221C3B6E8E00AED768 /* FriendRecordCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FriendRecordCell.xib; path = cells/FriendRecordCell.xib; sourceTree = "<group>"; };
+		DA258D251C3B6E8E00AED768 /* MyMessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MyMessageCell.xib; path = cells/MyMessageCell.xib; sourceTree = "<group>"; };
+		DA258D261C3B6E8E00AED768 /* MyRecordCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MyRecordCell.xib; path = cells/MyRecordCell.xib; sourceTree = "<group>"; };
+		DA258D2D1C3B6F2E00AED768 /* MessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageCell.h; path = cells/MessageCell.h; sourceTree = "<group>"; };
+		DA258D2E1C3B6F2E00AED768 /* MessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MessageCell.m; path = cells/MessageCell.m; sourceTree = "<group>"; };
 		DA9046961C3A49AA009E75B7 /* Friend+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Friend+CoreDataProperties.h"; path = "dataStorage/Friend+CoreDataProperties.h"; sourceTree = "<group>"; };
 		DA9046971C3A49AA009E75B7 /* Friend+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Friend+CoreDataProperties.m"; path = "dataStorage/Friend+CoreDataProperties.m"; sourceTree = "<group>"; };
 		DA9046981C3A49AA009E75B7 /* Friend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Friend.h; path = dataStorage/Friend.h; sourceTree = "<group>"; };
@@ -132,6 +143,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DA258D2C1C3B6E9600AED768 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				DA258D2D1C3B6F2E00AED768 /* MessageCell.h */,
+				DA258D2E1C3B6F2E00AED768 /* MessageCell.m */,
+				DA258D211C3B6E8E00AED768 /* FriendMessageCell.xib */,
+				DA258D221C3B6E8E00AED768 /* FriendRecordCell.xib */,
+				DA258D251C3B6E8E00AED768 /* MyMessageCell.xib */,
+				DA258D261C3B6E8E00AED768 /* MyRecordCell.xib */,
+			);
+			name = Cells;
+			sourceTree = "<group>";
+		};
 		DA9046B91C3A51A8009E75B7 /* Tools */ = {
 			isa = PBXGroup;
 			children = (
@@ -160,6 +184,7 @@
 				DA9046C61C3A6668009E75B7 /* RegisterViewController.m */,
 				DA9046CB1C3A6698009E75B7 /* ChatViewController.h */,
 				DA9046CC1C3A6698009E75B7 /* ChatViewController.m */,
+				DA258D2C1C3B6E9600AED768 /* Cells */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -360,10 +385,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				DA9046BF1C3A5601009E75B7 /* 0.png in Resources */,
+				DA258D281C3B6E8E00AED768 /* FriendRecordCell.xib in Resources */,
+				DA258D271C3B6E8E00AED768 /* FriendMessageCell.xib in Resources */,
 				DA95D5A81C3A16E6001ED1A6 /* LaunchScreen.storyboard in Resources */,
 				DA95D5A51C3A16E6001ED1A6 /* Assets.xcassets in Resources */,
+				DA258D2A1C3B6E8E00AED768 /* MyMessageCell.xib in Resources */,
 				DA95D5A01C3A16E6001ED1A6 /* Main.storyboard in Resources */,
 				DA9046C01C3A5601009E75B7 /* 1.png in Resources */,
+				DA258D2B1C3B6E8E00AED768 /* MyRecordCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,6 +429,7 @@
 				DA9046C41C3A663D009E75B7 /* LoginViewController.m in Sources */,
 				DA95D59A1C3A16E6001ED1A6 /* AppDelegate.m in Sources */,
 				DA95D5A31C3A16E6001ED1A6 /* p2pChat.xcdatamodeld in Sources */,
+				DA258D2F1C3B6F2E00AED768 /* MessageCell.m in Sources */,
 				DA95D5971C3A16E6001ED1A6 /* main.m in Sources */,
 				DA9046A21C3A49AA009E75B7 /* Friend+CoreDataProperties.m in Sources */,
 				DA9046BC1C3A525F009E75B7 /* AsyncUdpSocket.m in Sources */,
@@ -549,6 +579,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = p2pChat/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = zxkleetcode.p2pChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -560,6 +591,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = p2pChat/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = zxkleetcode.p2pChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";

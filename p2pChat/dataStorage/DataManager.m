@@ -22,6 +22,7 @@
     DataManager *manager = nil;
     AppDelegate *delegate = [UIApplication sharedApplication].delegate;
     manager = delegate.dataManager;
+    manager.context = delegate.managedObjectContext;
 
     return manager;
 }
