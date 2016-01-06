@@ -10,6 +10,7 @@
 #import "DataManager.h"
 #import "AudioCenter.h"
 #import "MessageProtocal.h"
+#import "Tool.h"
 
 @interface AppDelegate ()
 
@@ -20,6 +21,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     _udpSocket = [[AsyncUdpSocket alloc]initWithDelegate:self];
     [_udpSocket bindToPort:1234 error:nil];
+    [_udpSocket setMaxReceiveBufferSize:65535];
     [_udpSocket receiveWithTimeout:-1 tag:0];
    
     _audioCenter = [[AudioCenter alloc]init];
@@ -134,7 +136,7 @@
 }
 
 - (void)onUdpSocket:(AsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error {
-    NSLog(@"didNotSendDataWithTag");
+    NSLog(@"didNotSendDataWithTag: %@", error);
 }
 
 - (BOOL)onUdpSocket:(AsyncUdpSocket *)sock
@@ -150,12 +152,18 @@
     MessageProtocalType type = [_messageProtocal getMessageType:data];
 //    unsigned short userId = [_messageProtocal getUserID:data];
     NSData *bodyData = [_messageProtocal getBodyData:data];
+    NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
+    NSDate *date = [NSDate date];
     
     switch (type) {
         case MessageProtocalTypeMessage:
-            [_dataManager saveMessageWithUserID:[NSNumber numberWithUnsignedShort:234] time:[NSDate date] body:[[NSString alloc]initWithData:bodyData encoding:NSUTF8StringEncoding] isOut:NO];
+            [_dataManager saveMessageWithUserID:[NSNumber numberWithUnsignedShort:234] time:date body:[[NSString alloc]initWithData:bodyData encoding:NSUTF8StringEncoding] isOut:NO];
             break;
         case MessageProtocalTypeRecord:
+            path = [path stringByAppendingPathComponent:[[Tool stringFromDate:date]stringByAppendingPathExtension:@"caf"]];
+            [bodyData writeToFile:path atomically:YES];
+            [_dataManager saveRecordWithUserID:[NSNumber numberWithUnsignedShort:234] time:date path:path length:@"5" isOut:NO];
+            break;
         case MessageProtocalTypePicture:
         case MessageProtocalTypeFile:
         case MessageProtocalTypeAudio:

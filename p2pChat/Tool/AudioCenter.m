@@ -26,7 +26,7 @@
 
 - (void)startRecord {
     NSLog(@"AudioCenter: record start");
-    NSDictionary *settings = @{AVFormatIDKey : @(kAudioFormatLinearPCM), AVSampleRateKey : @(8000), AVChannelLayoutKey : @(1), AVLinearPCMBitDepthKey : @(8), AVLinearPCMIsFloatKey : @(YES)};
+    NSDictionary *settings = @{AVFormatIDKey : @(kAudioFormatiLBC), AVSampleRateKey : @(8000), AVChannelLayoutKey : @(1), AVLinearPCMBitDepthKey : @(8), AVLinearPCMIsFloatKey : @(YES), AVEncoderAudioQualityKey : @(AVAudioQualityMin)};
     NSError *err = nil;
     _recorder = [[AVAudioRecorder alloc]initWithURL:[NSURL fileURLWithPath:_path] settings:settings error:&err];
     if (err) {
@@ -38,7 +38,7 @@
 - (float)stopRecord {
     NSTimeInterval during = _recorder.currentTime;
     [_recorder stop];
-    [self startPlay];
+//    [self startPlay];
     return (float)during;
 }
 

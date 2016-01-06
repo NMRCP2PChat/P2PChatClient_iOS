@@ -18,4 +18,6 @@
 - (void)startRecord;
 - (float)stopRecord;
 
+- (void)startPlay;
+
 @end

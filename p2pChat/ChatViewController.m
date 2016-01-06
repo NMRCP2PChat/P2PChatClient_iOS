@@ -14,18 +14,25 @@
 #import "Message.h"
 #import "MyFetchedResultsControllerDelegate.h"
 #import "MessageCell.h"
+#import "AudioCenter.h"
+#import "Tool.h"
+
+#define RECORDVIEWHEIGHT 100
 
 @interface ChatViewController () <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate> {
     NSString *_name;
     NSNumber *_userID;
     NSString *_photoPath;
+    BOOL _showRecordView;
+    CGSize _screenSize;
 }
 
 @property (weak, nonatomic) IBOutlet UIView *baseView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *baseBottomConstraint;
-
 @property (weak, nonatomic) IBOutlet UITextField *messageTF;
 @property (weak, nonatomic) IBOutlet UITableView *historyTableView;
+
+@property (strong, nonatomic) UIView *recordView;
 
 @property (strong, nonatomic) NSFetchedResultsController *historyController;
 @property (strong, nonatomic) MyFetchedResultsControllerDelegate *historyControllerDelegate;
@@ -33,6 +40,8 @@
 @property (strong, nonatomic) AsyncUdpSocket *udpSocket;
 
 @property (strong, nonatomic) NSString *myPhotoPath;
+
+@property (strong, nonatomic) AudioCenter *audioCenter;
 
 @end
 
@@ -44,7 +53,7 @@
     // init socket
     AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
     _udpSocket = appDelegate.udpSocket;
-    _ipStr = @"10.8.53.191";
+    _ipStr = @"127.0.0.1";
     
     //--------
     _userID = [NSNumber numberWithUnsignedShort:234];
@@ -57,9 +66,9 @@
     _historyControllerDelegate = [[MyFetchedResultsControllerDelegate alloc]initWithTableView:_historyTableView];
     _historyController.delegate = _historyControllerDelegate;
     
-    for (Message *msg in _historyController.fetchedObjects) {
-        NSLog(@"%@", msg.isOut);
-    }
+//    for (Message *msg in _historyController.fetchedObjects) {
+//        NSLog(@"%@", msg.isOut);
+//    }
     
     // init text field
     _messageTF.delegate = self;
@@ -70,6 +79,18 @@
     [_historyTableView registerNib:[UINib nibWithNibName:@"MyRecordCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"my record"];
     [_historyTableView registerNib:[UINib nibWithNibName:@"FriendRecordCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"friend record"];
     _myPhotoPath = [[NSUserDefaults standardUserDefaults]stringForKey:@"photoPath"];
+    
+    // init record view
+    _screenSize = [UIScreen mainScreen].bounds.size;
+    _showRecordView = NO;
+    _recordView = [[UIView alloc]initWithFrame:CGRectMake(0, _screenSize.height, _screenSize.width, RECORDVIEWHEIGHT)];
+    UIButton *recordBtn = [UIButton buttonWithType:UIButtonTypeContactAdd];
+    recordBtn.frame = CGRectMake(_screenSize.width / 2 - 10, RECORDVIEWHEIGHT / 2 - 10, 20, 20);
+    [recordBtn addTarget:self action:@selector(startRecord) forControlEvents:UIControlEventTouchDown];
+    [recordBtn addTarget:self action:@selector(stopRecord) forControlEvents:UIControlEventTouchUpInside];
+    [_recordView addSubview:recordBtn];
+    [self.view addSubview:_recordView];
+    _audioCenter = [AudioCenter shareInstance];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -84,10 +105,21 @@
 
 #pragma mark -- IB actions
 - (IBAction)record:(id)sender {
-    _baseBottomConstraint.constant = -150;
-    [UIView animateWithDuration:0.5 animations:^{
-        [self.view layoutIfNeeded];
-    }];
+    if (_showRecordView) {
+        _baseBottomConstraint.constant = 0;
+        [UIView animateWithDuration:0.5 animations:^{
+            _recordView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, RECORDVIEWHEIGHT);
+            [self.view layoutIfNeeded];
+        }];
+        _showRecordView = NO;
+    } else {
+        _baseBottomConstraint.constant = RECORDVIEWHEIGHT * -1;
+        [UIView animateWithDuration:0.5 animations:^{
+            _recordView.frame = CGRectMake(0, _screenSize.height - RECORDVIEWHEIGHT, _screenSize.width, RECORDVIEWHEIGHT);
+            [self.view layoutIfNeeded];
+        }];
+        _showRecordView = YES;
+    }
 }
 
 - (IBAction)send:(id)sender {
@@ -105,6 +137,19 @@
 
 - (IBAction)more:(id)sender {
     
+}
+
+- (void)startRecord {
+    NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
+    path = [path stringByAppendingPathComponent:[[Tool stringFromDate:[NSDate date]]stringByAppendingPathExtension:@"caf"]];
+    _audioCenter.path = path;
+    [_audioCenter startRecord];
+}
+
+- (void)stopRecord {
+    CGFloat during = [_audioCenter stopRecord];
+    [[DataManager shareManager]saveRecordWithUserID:_userID time:[NSDate date] path:_audioCenter.path length:[NSString stringWithFormat:@"%f", during] isOut:YES];
+    [_udpSocket sendData:[[MessageProtocal shareInstance] archiveRecord:_audioCenter.path] toHost:_ipStr port:1234 withTimeout:-1 tag:1];
 }
 
 #pragma mark --table view data source
@@ -127,6 +172,14 @@
                 [cell setPhotoPath:_photoPath time:message.time body:message.body more:nil];
             }
             break;
+        case MessageProtocalTypeRecord:
+            if (message.isOut.boolValue) {
+                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:@"my record" forIndexPath:indexPath];
+                [cell setPhotoPath:_myPhotoPath time:message.time body:nil more:message.more];
+            } else {
+                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:@"friend record" forIndexPath:indexPath];
+                [cell setPhotoPath:_photoPath time:message.time body:nil more:message.more];
+            }
             
         default:
             break;
