@@ -22,10 +22,11 @@ typedef NS_ENUM (char, MessageProtocalType) {
 + (instancetype)shareInstance;
 
 - (NSData *)archiveText:(NSString *)body;
-- (NSData *)archiveRecord:(NSString *)path;
+- (NSArray *)archiveRecord:(NSString *)path during:(NSNumber *)during;
 
 - (unsigned short)getUserID:(NSData *)data;
 - (char)getMessageType:(NSData *)data;
 - (NSData *)getBodyData:(NSData *)data;
+- (int)getPieceNum:(NSData *)data;
 
 @end

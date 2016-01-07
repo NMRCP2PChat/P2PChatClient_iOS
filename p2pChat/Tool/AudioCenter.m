@@ -26,7 +26,7 @@
 
 - (void)startRecord {
     NSLog(@"AudioCenter: record start");
-    NSDictionary *settings = @{AVFormatIDKey : @(kAudioFormatiLBC), AVSampleRateKey : @(8000), AVChannelLayoutKey : @(1), AVLinearPCMBitDepthKey : @(8), AVLinearPCMIsFloatKey : @(YES), AVEncoderAudioQualityKey : @(AVAudioQualityMin)};
+    NSDictionary *settings = @{AVFormatIDKey : @(kAudioFormatiLBC), AVSampleRateKey : @(8000), AVChannelLayoutKey : @(1), AVLinearPCMBitDepthKey : @(8), AVLinearPCMIsFloatKey : @(YES)};
     NSError *err = nil;
     _recorder = [[AVAudioRecorder alloc]initWithURL:[NSURL fileURLWithPath:_path] settings:settings error:&err];
     if (err) {

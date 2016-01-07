@@ -12,7 +12,7 @@
 #import "MessageProtocal.h"
 #import "Tool.h"
 
-@interface AppDelegate ()
+@interface AppDelegate () <AsyncUdpSocketDelegate>
 
 @end
 
@@ -131,9 +131,6 @@
 }
 
 #pragma mark - async udp socket delegate
-- (void)onUdpSocket:(AsyncUdpSocket *)sock didSendDataWithTag:(long)tag {
-    NSLog(@"didSendDataWithTag");
-}
 
 - (void)onUdpSocket:(AsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error {
     NSLog(@"didNotSendDataWithTag: %@", error);
@@ -151,15 +148,22 @@
     //解析data，存储message
     MessageProtocalType type = [_messageProtocal getMessageType:data];
 //    unsigned short userId = [_messageProtocal getUserID:data];
+    NSMutableData *wholeData = [[NSMutableData alloc]init];
+    NSMutableDictionary *buffDic = [[NSMutableDictionary alloc]init];//暂不考虑多用户的问题
     NSData *bodyData = [_messageProtocal getBodyData:data];
+    NSString *more = nil;
     NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
     NSDate *date = [NSDate date];
+    int left;//暂不考虑多用户、多类型传输问题
     
     switch (type) {
         case MessageProtocalTypeMessage:
             [_dataManager saveMessageWithUserID:[NSNumber numberWithUnsignedShort:234] time:date body:[[NSString alloc]initWithData:bodyData encoding:NSUTF8StringEncoding] isOut:NO];
             break;
         case MessageProtocalTypeRecord:
+            if ([_messageProtocal getPieceNum:bodyData] == 0) {
+                left = [_messageProtocal getPieceNum:bodyData];
+            }
             path = [path stringByAppendingPathComponent:[[Tool stringFromDate:date]stringByAppendingPathExtension:@"caf"]];
             [bodyData writeToFile:path atomically:YES];
             [_dataManager saveRecordWithUserID:[NSNumber numberWithUnsignedShort:234] time:date path:path length:@"5" isOut:NO];
@@ -173,14 +177,6 @@
     }
     [sock receiveWithTimeout:-1 tag:0];
     return YES;
-}
-
-- (void)onUdpSocket:(AsyncUdpSocket *)sock didNotReceiveDataWithTag:(long)tag dueToError:(NSError *)error {
-    NSLog(@"didNotReceiveDataWithTag");
-}
-
-- (void)onUdpSocketDidClose:(AsyncUdpSocket *)sock {
-    NSLog(@"DidClose");
 }
 
 @end

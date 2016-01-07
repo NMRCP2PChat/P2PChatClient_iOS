@@ -149,7 +149,10 @@
 - (void)stopRecord {
     CGFloat during = [_audioCenter stopRecord];
     [[DataManager shareManager]saveRecordWithUserID:_userID time:[NSDate date] path:_audioCenter.path length:[NSString stringWithFormat:@"%f", during] isOut:YES];
-    [_udpSocket sendData:[[MessageProtocal shareInstance] archiveRecord:_audioCenter.path] toHost:_ipStr port:1234 withTimeout:-1 tag:1];
+    NSArray *recordArr = [[MessageProtocal shareInstance]archiveRecord:_audioCenter.path during:[NSNumber numberWithFloat:during]];
+    for (NSData *pieceData in recordArr) {
+        [_udpSocket sendData:pieceData toHost:_ipStr port:1234 withTimeout:-1 tag:1];
+    }    
 }
 
 #pragma mark --table view data source

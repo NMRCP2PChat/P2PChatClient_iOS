@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA01456E1C3E4C5700C85680 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = DA01456D1C3E4C5700C85680 /* AsyncSocket.m */; };
 		DA258D271C3B6E8E00AED768 /* FriendMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA258D211C3B6E8E00AED768 /* FriendMessageCell.xib */; };
 		DA258D281C3B6E8E00AED768 /* FriendRecordCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA258D221C3B6E8E00AED768 /* FriendRecordCell.xib */; };
 		DA258D2A1C3B6E8E00AED768 /* MyMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA258D251C3B6E8E00AED768 /* MyMessageCell.xib */; };
@@ -59,6 +60,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DA01456C1C3E4C5700C85680 /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncSocket.h; path = framework/AsyncSocket.h; sourceTree = "<group>"; };
+		DA01456D1C3E4C5700C85680 /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AsyncSocket.m; path = framework/AsyncSocket.m; sourceTree = "<group>"; };
 		DA258D211C3B6E8E00AED768 /* FriendMessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FriendMessageCell.xib; path = cells/FriendMessageCell.xib; sourceTree = "<group>"; };
 		DA258D221C3B6E8E00AED768 /* FriendRecordCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FriendRecordCell.xib; path = cells/FriendRecordCell.xib; sourceTree = "<group>"; };
 		DA258D251C3B6E8E00AED768 /* MyMessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MyMessageCell.xib; path = cells/MyMessageCell.xib; sourceTree = "<group>"; };
@@ -228,6 +231,8 @@
 			children = (
 				DA9046BA1C3A525F009E75B7 /* AsyncUdpSocket.h */,
 				DA9046BB1C3A525F009E75B7 /* AsyncUdpSocket.m */,
+				DA01456C1C3E4C5700C85680 /* AsyncSocket.h */,
+				DA01456D1C3E4C5700C85680 /* AsyncSocket.m */,
 				DA95D5961C3A16E6001ED1A6 /* main.m */,
 				DA95D5A41C3A16E6001ED1A6 /* Assets.xcassets */,
 				DA95D5A61C3A16E6001ED1A6 /* LaunchScreen.storyboard */,
@@ -424,6 +429,7 @@
 				DA9046AA1C3A49EB009E75B7 /* DataManager.m in Sources */,
 				DA95D59D1C3A16E6001ED1A6 /* RecentViewController.m in Sources */,
 				DA9046A71C3A49AA009E75B7 /* LastMessage.m in Sources */,
+				DA01456E1C3E4C5700C85680 /* AsyncSocket.m in Sources */,
 				DA9046A31C3A49AA009E75B7 /* Friend.m in Sources */,
 				DA9046B61C3A51A1009E75B7 /* MessageProtocal.m in Sources */,
 				DA9046C41C3A663D009E75B7 /* LoginViewController.m in Sources */,

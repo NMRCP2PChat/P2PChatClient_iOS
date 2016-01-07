@@ -9,8 +9,7 @@
 #import "MessageProtocal.h"
 #import "AppDelegate.h"
 
-// 0000 文字 0001 语音 0010 图片 0011 文件 0100 音频请求 0101 视频请求 0000 pc 0001 web 0010 ios 0011 android
-// 客户端版本有没有必要？
+#define PIECELENGTH 9000
 
 @implementation MessageProtocal
 
@@ -36,9 +35,24 @@
     return [self archiveMessageWithType:2 length:strData.length body:strData];
 }
 
-- (NSData *)archiveRecord:(NSString *)path {
+- (NSArray *)archiveRecord:(NSString *)path during:(NSNumber *)during{
     NSData *recordData = [NSData dataWithContentsOfFile:path];
-    return [self archiveMessageWithType:18 length:recordData.length body:recordData];
+    long length = recordData.length;
+    int piece = recordData.length / PIECELENGTH;
+    NSMutableArray *arr = [[NSMutableArray alloc]init];
+    float time = [during floatValue];
+    
+    NSMutableData *infoData = [[NSMutableData alloc]init];
+    [infoData appendBytes:&time length:sizeof(float)];
+    [infoData appendBytes:&length length:sizeof(long)];
+    [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 length:sizeof(infoData) body:infoData]];
+    
+    for (int i = 0; i < piece; i++) {
+        [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 | (char)(i + 1) length:PIECELENGTH body:[recordData subdataWithRange:NSMakeRange(i * PIECELENGTH, (i + 1) * PIECELENGTH)]]];
+    }
+    [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 | (char)piece length:recordData.length - piece * PIECELENGTH body:[recordData subdataWithRange:NSMakeRange(piece * PIECELENGTH, recordData.length - piece * PIECELENGTH)]]];
+    
+    return arr;
 }
 
 - (unsigned short)getUserID:(NSData *)data {
@@ -53,6 +67,13 @@
     [data getBytes:&type range:NSMakeRange(sizeof(unsigned short), sizeof(char))];
     
     return type >> 4;
+}
+
+- (int)getPieceNum:(NSData *)data {
+    char order;
+    [data getBytes:&order range:NSMakeRange(sizeof(unsigned short), sizeof(char))];
+    
+    return order & 15;
 }
 
 - (NSData *)getBodyData:(NSData *)data {
