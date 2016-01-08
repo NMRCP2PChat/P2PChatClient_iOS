@@ -19,6 +19,11 @@
 
 #define RECORDVIEWHEIGHT 100
 
+#define MyMessageCell @"my message"
+#define FriendMessageCell @"friend message"
+#define MyRecordCell @"my record"
+#define FriendRecordCell @"friend record"
+
 @interface ChatViewController () <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate> {
     NSString *_name;
     NSNumber *_userID;
@@ -74,10 +79,10 @@
     _messageTF.delegate = self;
     
     // init cells
-    [_historyTableView registerNib:[UINib nibWithNibName:@"MyMessageCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"my message"];
-    [_historyTableView registerNib:[UINib nibWithNibName:@"FriendMessageCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"friend message"];
-    [_historyTableView registerNib:[UINib nibWithNibName:@"MyRecordCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"my record"];
-    [_historyTableView registerNib:[UINib nibWithNibName:@"FriendRecordCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"friend record"];
+    [_historyTableView registerNib:[UINib nibWithNibName:@"MyMessageCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:MyMessageCell];
+    [_historyTableView registerNib:[UINib nibWithNibName:@"FriendMessageCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:FriendMessageCell];
+    [_historyTableView registerNib:[UINib nibWithNibName:@"MyRecordCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:MyRecordCell];
+    [_historyTableView registerNib:[UINib nibWithNibName:@"FriendRecordCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:FriendRecordCell];
     _myPhotoPath = [[NSUserDefaults standardUserDefaults]stringForKey:@"photoPath"];
     
     // init record view
@@ -129,10 +134,13 @@
         _messageTF.text = @"";
         [[DataManager shareManager]saveMessageWithUserID:_userID time:date body:message isOut:YES];
     }
-    if(![_udpSocket sendData:[[MessageProtocal shareInstance] archiveText:message] toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
+    NSData *data = [[MessageProtocal shareInstance] archiveText:message];
+    if(![_udpSocket sendData:data toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
         NSLog(@"BaseView send failed");
+    } else {
+        NSDictionary *packetInfo = @{@"ipStr" : _ipStr, @"data" : data};
+        [[NSNotificationCenter defaultCenter]postNotificationName:MessageProtocalSendingNotification object:packetInfo];
     }
-
 }
 
 - (IBAction)more:(id)sender {
@@ -148,7 +156,7 @@
 
 - (void)stopRecord {
     CGFloat during = [_audioCenter stopRecord];
-    [[DataManager shareManager]saveRecordWithUserID:_userID time:[NSDate date] path:_audioCenter.path length:[NSString stringWithFormat:@"%f", during] isOut:YES];
+    [[DataManager shareManager]saveRecordWithUserID:_userID time:[NSDate date] path:_audioCenter.path length:[NSString stringWithFormat:@"%0.2f", during] isOut:YES];
     NSArray *recordArr = [[MessageProtocal shareInstance]archiveRecord:_audioCenter.path during:[NSNumber numberWithFloat:during]];
     for (NSData *pieceData in recordArr) {
         [_udpSocket sendData:pieceData toHost:_ipStr port:1234 withTimeout:-1 tag:1];

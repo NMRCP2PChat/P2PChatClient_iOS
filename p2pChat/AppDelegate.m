@@ -11,8 +11,11 @@
 #import "AudioCenter.h"
 #import "MessageProtocal.h"
 #import "Tool.h"
+#import "MessageQueueManager.h"
 
 @interface AppDelegate () <AsyncUdpSocketDelegate>
+
+@property (strong, nonatomic) NSMutableArray *buffArr;
 
 @end
 
@@ -27,7 +30,10 @@
     _audioCenter = [[AudioCenter alloc]init];
     _messageProtocal = [[MessageProtocal alloc]init];
     _dataManager = [[DataManager alloc]init];
-//    _dataManager.context = _managedObjectContext;// 此时_managedObjectContext为nil
+    
+    _buffArr = [[NSMutableArray alloc]initWithCapacity:15];
+    
+    MessageQueueManager *queueManager = [[MessageQueueManager alloc]init];
     
     //
     //    NSString *path2 = [[NSBundle mainBundle]pathForResource:@"0" ofType:@"png"];
@@ -145,28 +151,39 @@
     if (_dataManager.context == nil) {
         _dataManager.context = _managedObjectContext;
     }
-    //解析data，存储message
-    MessageProtocalType type = [_messageProtocal getMessageType:data];
-//    unsigned short userId = [_messageProtocal getUserID:data];
+    
     NSMutableData *wholeData = [[NSMutableData alloc]init];
-    NSMutableDictionary *buffDic = [[NSMutableDictionary alloc]init];//暂不考虑多用户的问题
-    NSData *bodyData = [_messageProtocal getBodyData:data];
     NSString *more = nil;
     NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
     NSDate *date = [NSDate date];
-    int left;//暂不考虑多用户、多类型传输问题
+    //解析data，存储message
+    unsigned int wholeLength = [_messageProtocal getWholeLength:data];
+    MessageProtocalType type = [_messageProtocal getMessageType:data];
+    int pieceNum = [_messageProtocal getPieceNum:data];
+//    unsigned short userId = [_messageProtocal getUserID:data];
+    unsigned short userId = 234;
+    NSData *bodyData = [_messageProtocal getBodyData:data];
     
     switch (type) {
         case MessageProtocalTypeMessage:
-            [_dataManager saveMessageWithUserID:[NSNumber numberWithUnsignedShort:234] time:date body:[[NSString alloc]initWithData:bodyData encoding:NSUTF8StringEncoding] isOut:NO];
+            [_dataManager saveMessageWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date body:[[NSString alloc]initWithData:bodyData encoding:NSUTF8StringEncoding] isOut:NO];
             break;
         case MessageProtocalTypeRecord:
-            if ([_messageProtocal getPieceNum:bodyData] == 0) {
-                left = [_messageProtocal getPieceNum:bodyData];
+            _buffArr[pieceNum] = bodyData;
+            if ([_buffArr count] == wholeLength / 9000 + 2) {
+                float during;
+                [_buffArr[0] getBytes:&during range:NSMakeRange(0, sizeof(float))];
+                more = [[NSString alloc]initWithFormat:@"%0.2f", during];
+                for (int i = 1; i < wholeLength / 9000 + 2; i++) {
+                    [wholeData appendData:_buffArr[i]];
+                }
+                path = [path stringByAppendingPathComponent:[[Tool stringFromDate:date]stringByAppendingPathExtension:@"caf"]];
+                [wholeData writeToFile:path atomically:YES];
+                [_dataManager saveRecordWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date path:path length:more isOut:NO];
+                [_buffArr removeObjectsAtIndexes:[[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(0, wholeLength / 9000 + 2)]];
+                _audioCenter.path = path;
+                [_audioCenter startPlay];
             }
-            path = [path stringByAppendingPathComponent:[[Tool stringFromDate:date]stringByAppendingPathExtension:@"caf"]];
-            [bodyData writeToFile:path atomically:YES];
-            [_dataManager saveRecordWithUserID:[NSNumber numberWithUnsignedShort:234] time:date path:path length:@"5" isOut:NO];
             break;
         case MessageProtocalTypePicture:
         case MessageProtocalTypeFile:

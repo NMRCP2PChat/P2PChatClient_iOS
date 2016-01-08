@@ -14,8 +14,12 @@ typedef NS_ENUM (char, MessageProtocalType) {
     MessageProtocalTypePicture,
     MessageProtocalTypeFile,
     MessageProtocalTypeAudio,
-    MessageProtocalTypeVideo
+    MessageProtocalTypeVideo,
+    MessageProtocalTypeACK
 };
+
+#define MessageProtocalSendingNotification @"MessageProtocalSendingNotification"
+#define MessageProtocalDidSendNotification @"MessageProtocalDidSendNotification"
 
 @interface MessageProtocal : NSObject
 
@@ -24,9 +28,11 @@ typedef NS_ENUM (char, MessageProtocalType) {
 - (NSData *)archiveText:(NSString *)body;
 - (NSArray *)archiveRecord:(NSString *)path during:(NSNumber *)during;
 
+- (int)getPacketID:(NSData *)data;
 - (unsigned short)getUserID:(NSData *)data;
 - (char)getMessageType:(NSData *)data;
-- (NSData *)getBodyData:(NSData *)data;
 - (int)getPieceNum:(NSData *)data;
+- (unsigned int)getWholeLength:(NSData *)data;
+- (NSData *)getBodyData:(NSData *)data;
 
 @end

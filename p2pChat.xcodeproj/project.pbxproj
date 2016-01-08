@@ -40,6 +40,7 @@
 		DA95D5A81C3A16E6001ED1A6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA95D5A61C3A16E6001ED1A6 /* LaunchScreen.storyboard */; };
 		DA95D5B31C3A16E6001ED1A6 /* p2pChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DA95D5B21C3A16E6001ED1A6 /* p2pChatTests.m */; };
 		DA95D5BE1C3A16E6001ED1A6 /* p2pChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = DA95D5BD1C3A16E6001ED1A6 /* p2pChatUITests.m */; };
+		DAA67E3E1C3FACD50037C105 /* MessageQueueManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA67E3D1C3FACD50037C105 /* MessageQueueManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -119,6 +120,8 @@
 		DA95D5B91C3A16E6001ED1A6 /* p2pChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = p2pChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA95D5BD1C3A16E6001ED1A6 /* p2pChatUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = p2pChatUITests.m; sourceTree = "<group>"; };
 		DA95D5BF1C3A16E6001ED1A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DAA67E3C1C3FACD50037C105 /* MessageQueueManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageQueueManager.h; sourceTree = "<group>"; };
+		DAA67E3D1C3FACD50037C105 /* MessageQueueManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageQueueManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +171,8 @@
 				DA9046B01C3A51A1009E75B7 /* MessageProtocal.m */,
 				DA9046B11C3A51A1009E75B7 /* MyFetchedResultsControllerDelegate.h */,
 				DA9046B21C3A51A1009E75B7 /* MyFetchedResultsControllerDelegate.m */,
+				DAA67E3C1C3FACD50037C105 /* MessageQueueManager.h */,
+				DAA67E3D1C3FACD50037C105 /* MessageQueueManager.m */,
 				DA9046B31C3A51A1009E75B7 /* Tool.h */,
 				DA9046B41C3A51A1009E75B7 /* Tool.m */,
 			);
@@ -441,6 +446,7 @@
 				DA9046BC1C3A525F009E75B7 /* AsyncUdpSocket.m in Sources */,
 				DA9046C71C3A6668009E75B7 /* RegisterViewController.m in Sources */,
 				DA9046A51C3A49AA009E75B7 /* Message.m in Sources */,
+				DAA67E3E1C3FACD50037C105 /* MessageQueueManager.m in Sources */,
 				DA9046B51C3A51A1009E75B7 /* AudioCenter.m in Sources */,
 				DA9046A41C3A49AA009E75B7 /* Message+CoreDataProperties.m in Sources */,
 				DA9046B81C3A51A1009E75B7 /* Tool.m in Sources */,
