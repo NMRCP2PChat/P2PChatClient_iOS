@@ -25,6 +25,8 @@ typedef NS_ENUM (char, MessageProtocalType) {
 
 + (instancetype)shareInstance;
 
+- (NSData *)archiveACK:(unsigned char)packetID;
+
 - (NSData *)archiveText:(NSString *)body;
 - (NSArray *)archiveRecord:(NSString *)path during:(NSNumber *)during;
 
@@ -34,5 +36,6 @@ typedef NS_ENUM (char, MessageProtocalType) {
 - (int)getPieceNum:(NSData *)data;
 - (unsigned int)getWholeLength:(NSData *)data;
 - (NSData *)getBodyData:(NSData *)data;
+- (unsigned char)getACKID:(NSData *)data;
 
 @end

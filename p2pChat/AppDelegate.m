@@ -33,7 +33,15 @@
     
     _buffArr = [[NSMutableArray alloc]initWithCapacity:15];
     
-    MessageQueueManager *queueManager = [[MessageQueueManager alloc]init];
+    _messageQueueManager = [[MessageQueueManager alloc]initWithSocket:_udpSocket];
+    NSTimeInterval period = 1.0;
+    dispatch_queue_t messageQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_source_t _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, messageQueue);
+    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), period * NSEC_PER_SEC, 0);
+    dispatch_source_set_event_handler(_timer, ^{
+        [_messageQueueManager sendAgain];
+    });
+    dispatch_resume(_timer);
     
     //
     //    NSString *path2 = [[NSBundle mainBundle]pathForResource:@"0" ofType:@"png"];
@@ -157,12 +165,18 @@
     NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
     NSDate *date = [NSDate date];
     //解析data，存储message
-    unsigned int wholeLength = [_messageProtocal getWholeLength:data];
+    unsigned char packetID = [_messageProtocal getPacketID:data];
     MessageProtocalType type = [_messageProtocal getMessageType:data];
-    int pieceNum = [_messageProtocal getPieceNum:data];
+    unsigned int wholeLength = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getWholeLength:data];
+    int pieceNum = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getPieceNum:data];
 //    unsigned short userId = [_messageProtocal getUserID:data];
     unsigned short userId = 234;
-    NSData *bodyData = [_messageProtocal getBodyData:data];
+    NSData *bodyData = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getBodyData:data];
+    
+    if (type != MessageProtocalTypeACK) {
+        [_udpSocket sendData:[_messageProtocal archiveACK:packetID] toHost:host port:1234 withTimeout:-1 tag:0];
+//        NSLog(@"send ack");
+    }
     
     switch (type) {
         case MessageProtocalTypeMessage:
@@ -189,7 +203,9 @@
         case MessageProtocalTypeFile:
         case MessageProtocalTypeAudio:
         case MessageProtocalTypeVideo:
-        default:
+        case MessageProtocalTypeACK:
+//            NSLog(@"received ack!");
+            [_messageQueueManager messageSended:[_messageProtocal getACKID:data]];
             break;
     }
     [sock receiveWithTimeout:-1 tag:0];

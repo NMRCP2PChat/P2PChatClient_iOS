@@ -13,6 +13,7 @@
 @class AudioCenter;
 @class MessageProtocal;
 @class DataManager;
+@class MessageQueueManager;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -29,6 +30,7 @@
 @property (strong, nonatomic) DataManager *dataManager;
 @property (strong, nonatomic) AudioCenter *audioCenter;
 @property (strong, nonatomic) MessageProtocal *messageProtocal;
+@property (strong, nonatomic) MessageQueueManager *messageQueueManager;
 
 @end
 

@@ -27,11 +27,21 @@ static unsigned char packetID = 0;
     NSNumber *userIDInteger = [[NSUserDefaults standardUserDefaults] objectForKey:@"userID"];
     unsigned short userID = [userIDInteger unsignedShortValue];
     [data appendBytes:&packetID length:sizeof(unsigned char)];
-    [data appendBytes:&userID length:sizeof(unsigned short)];
     [data appendBytes:&type length:sizeof(char)];
+    [data appendBytes:&userID length:sizeof(unsigned short)];
     [data appendBytes:&wholeLength length:sizeof(int)];
     [data appendBytes:&length length:sizeof(unsigned short)];
     [data appendBytes:body.bytes length:body.length];
+    return data;
+}
+
+- (NSData *)archiveACK:(unsigned char)receivePacketID {
+    NSMutableData *data = [[NSMutableData alloc]init];
+    unsigned char packetID = 0;
+    char type = MessageProtocalTypeACK << 4;
+    [data appendBytes:&packetID length:sizeof(unsigned char)];
+    [data appendBytes:&type length:sizeof(char)];
+    [data appendBytes:&receivePacketID length:sizeof(unsigned char)];
     return data;
 }
 
@@ -66,25 +76,25 @@ static unsigned char packetID = 0;
     return packetID;
 }
 
-- (unsigned short)getUserID:(NSData *)data {
-    unsigned short userID;
-    [data getBytes:&userID range:NSMakeRange(sizeof(unsigned char), sizeof(unsigned short))];
-    
-    return userID;
-}
-
 - (char)getMessageType:(NSData *)data {
     char type;
-    [data getBytes:&type range:NSMakeRange(sizeof(unsigned char) + sizeof(unsigned short), sizeof(char))];
+    [data getBytes:&type range:NSMakeRange(sizeof(unsigned char), sizeof(char))];
     
     return type >> 4;
 }
 
 - (int)getPieceNum:(NSData *)data {
     char order;
-    [data getBytes:&order range:NSMakeRange(sizeof(unsigned char)  + sizeof(unsigned short), sizeof(char))];
+    [data getBytes:&order range:NSMakeRange(sizeof(unsigned char), sizeof(char))];
     
     return order & 15;
+}
+
+- (unsigned short)getUserID:(NSData *)data {
+    unsigned short userID;
+    [data getBytes:&userID range:NSMakeRange(sizeof(unsigned char) + sizeof(char), sizeof(unsigned short))];
+    
+    return userID;
 }
 
 - (unsigned int)getWholeLength:(NSData *)data {
@@ -100,6 +110,12 @@ static unsigned char packetID = 0;
     NSData *strData = [data subdataWithRange:NSMakeRange(sizeof(unsigned char) + sizeof(char) + sizeof(unsigned short) + sizeof(unsigned int) + sizeof(unsigned short), len)];
 
     return strData;
+}
+
+- (unsigned char)getACKID:(NSData *)data {
+    unsigned char ackID;
+    [data getBytes:&ackID range:NSMakeRange(sizeof(unsigned char) + sizeof(char), sizeof(unsigned char))];
+    return ackID;
 }
 
 @end

@@ -16,6 +16,7 @@
 #import "MessageCell.h"
 #import "AudioCenter.h"
 #import "Tool.h"
+#import "MessageQueueManager.h"
 
 #define RECORDVIEWHEIGHT 100
 
@@ -43,10 +44,10 @@
 @property (strong, nonatomic) MyFetchedResultsControllerDelegate *historyControllerDelegate;
 
 @property (strong, nonatomic) AsyncUdpSocket *udpSocket;
+@property (strong, nonatomic) AudioCenter *audioCenter;
+@property (strong, nonatomic) MessageQueueManager *messageQueueManager;
 
 @property (strong, nonatomic) NSString *myPhotoPath;
-
-@property (strong, nonatomic) AudioCenter *audioCenter;
 
 @end
 
@@ -59,6 +60,8 @@
     AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
     _udpSocket = appDelegate.udpSocket;
     _ipStr = @"127.0.0.1";
+    
+    _messageQueueManager = appDelegate.messageQueueManager;
     
     //--------
     _userID = [NSNumber numberWithUnsignedShort:234];
@@ -136,10 +139,9 @@
     }
     NSData *data = [[MessageProtocal shareInstance] archiveText:message];
     if(![_udpSocket sendData:data toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
-        NSLog(@"BaseView send failed");
+        NSLog(@"ChatVC send text failed");
     } else {
-        NSDictionary *packetInfo = @{@"ipStr" : _ipStr, @"data" : data};
-        [[NSNotificationCenter defaultCenter]postNotificationName:MessageProtocalSendingNotification object:packetInfo];
+        [_messageQueueManager addSendingMessage:_ipStr packetData:data];
     }
 }
 
@@ -159,7 +161,11 @@
     [[DataManager shareManager]saveRecordWithUserID:_userID time:[NSDate date] path:_audioCenter.path length:[NSString stringWithFormat:@"%0.2f", during] isOut:YES];
     NSArray *recordArr = [[MessageProtocal shareInstance]archiveRecord:_audioCenter.path during:[NSNumber numberWithFloat:during]];
     for (NSData *pieceData in recordArr) {
-        [_udpSocket sendData:pieceData toHost:_ipStr port:1234 withTimeout:-1 tag:1];
+        if (![_udpSocket sendData:pieceData toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
+            NSLog(@"ChatVC send record failed");
+        } else {
+            [_messageQueueManager addSendingMessage:_ipStr packetData:pieceData];
+        }
     }    
 }
 

@@ -21,29 +21,32 @@
 
 @implementation MessageQueueManager
 
-- (id)init {
+- (id)initWithSocket:(AsyncUdpSocket *)udpSocket {
     self = [super init];
     _sendingQueue = [[NSMutableDictionary alloc]init];
-    AppDelegate *delegate = [UIApplication sharedApplication].delegate;
-    _udpSocket = delegate.udpSocket;
-    
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(addSendingMessage:) name:MessageProtocalSendingNotification object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(messageSended:) name:MessageProtocalDidSendNotification object:nil];
+    _udpSocket = udpSocket;
     
     return self;
 }
++ (instancetype)shareInstance {
+    AppDelegate *delegate = [UIApplication sharedApplication].delegate;
+    return delegate.messageQueueManager;
+}
 
-- (void)addSendingMessage:(NSDictionary *)packetInfo {
-    NSData *data = packetInfo[@"data"];
+- (void)addSendingMessage:(NSString *)ipStr packetData:(NSData *)data {
     unsigned int packetID = [[MessageProtocal shareInstance]getPacketID:data];
+    NSDictionary *packetInfo = @{@"ipStr" : ipStr, @"data" : data};
     _sendingQueue[[NSNumber numberWithUnsignedInt:packetID]] = packetInfo;
+//    NSLog(@"sending queue number: %d", _sendingQueue.allKeys.count);
 }
 
 - (void)messageSended:(unsigned int)packetID {
     [_sendingQueue removeObjectForKey:[NSNumber numberWithUnsignedInt:packetID]];
+//    NSLog(@"sending queue number: %d", _sendingQueue.allKeys.count);
 }
 
 - (void)sendAgain {
+    NSLog(@"MessageQueueManager send again");
     NSArray *keys = _sendingQueue.allKeys;
     for (NSNumber *key in keys) {
         NSDictionary *dic = _sendingQueue[key];
