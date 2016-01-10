@@ -26,11 +26,11 @@
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 
-@property (strong, nonatomic) AsyncUdpSocket *udpSocket;
-@property (strong, nonatomic) DataManager *dataManager;
-@property (strong, nonatomic) AudioCenter *audioCenter;
-@property (strong, nonatomic) MessageProtocal *messageProtocal;
-@property (strong, nonatomic) MessageQueueManager *messageQueueManager;
+@property (readonly, strong, nonatomic) AsyncUdpSocket *udpSocket;
+@property (readonly, strong, nonatomic) DataManager *dataManager;
+@property (readonly, strong, nonatomic) AudioCenter *audioCenter;
+@property (readonly, strong, nonatomic) MessageProtocal *messageProtocal;
+@property (readonly, strong, nonatomic) MessageQueueManager *messageQueueManager;
 
 @end
 

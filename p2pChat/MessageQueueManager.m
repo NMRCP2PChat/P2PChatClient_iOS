@@ -13,18 +13,18 @@
 
 @interface MessageQueueManager ()
 
-@property (strong, nonatomic) NSMutableDictionary *sendingQueue;
-
 @property (strong, nonatomic) AsyncUdpSocket *udpSocket;
+@property (strong, nonatomic) NSTimer *timer;
 
 @end
 
 @implementation MessageQueueManager
 
-- (id)initWithSocket:(AsyncUdpSocket *)udpSocket {
+- (id)initWithSocket:(AsyncUdpSocket *)udpSocket timer:(NSTimer *)timer {
     self = [super init];
     _sendingQueue = [[NSMutableDictionary alloc]init];
     _udpSocket = udpSocket;
+    _timer = timer;
     
     return self;
 }
@@ -37,6 +37,7 @@
     unsigned int packetID = [[MessageProtocal shareInstance]getPacketID:data];
     NSDictionary *packetInfo = @{@"ipStr" : ipStr, @"data" : data};
     _sendingQueue[[NSNumber numberWithUnsignedInt:packetID]] = packetInfo;
+    [_timer setFireDate:[NSDate date]];
 //    NSLog(@"sending queue number: %d", _sendingQueue.allKeys.count);
 }
 

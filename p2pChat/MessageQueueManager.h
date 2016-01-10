@@ -11,7 +11,9 @@
 
 @interface MessageQueueManager : NSObject
 
-- (id)initWithSocket:(AsyncUdpSocket *)udpSocket;
+@property (strong, nonatomic, readonly) NSMutableDictionary *sendingQueue;
+
+- (id)initWithSocket:(AsyncUdpSocket *)udpSocket timer:(NSTimer *)timer;
 + (instancetype)shareInstance;
 
 - (void)addSendingMessage:(NSString *)ipStr packetData:(NSData *)data;

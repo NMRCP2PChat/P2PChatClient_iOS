@@ -11,7 +11,7 @@
 
 @interface ChatViewController : UIViewController
 
-@property (strong, nonatomic) NSString *ipStr;
-@property (strong, nonatomic) Friend *friendInfo;
+@property (strong, nonatomic, readonly) NSString *ipStr;
+@property (strong, nonatomic, readonly) Friend *friendInfo;
 
 @end
