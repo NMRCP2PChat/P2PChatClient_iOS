@@ -17,8 +17,10 @@
 #import "AudioCenter.h"
 #import "Tool.h"
 #import "MessageQueueManager.h"
+#import "RecordView.h"
+#import "MoreView.h"
 
-#define RECORDVIEWHEIGHT 100
+#define VIEWHEIGHT 100
 
 #define MyMessageCell @"my message"
 #define FriendMessageCell @"friend message"
@@ -30,6 +32,7 @@
     NSNumber *_userID;
     NSString *_photoPath;
     BOOL _showRecordView;
+    BOOL _showMoreView;
     CGSize _screenSize;
 }
 
@@ -38,13 +41,13 @@
 @property (weak, nonatomic) IBOutlet UITextField *messageTF;
 @property (weak, nonatomic) IBOutlet UITableView *historyTableView;
 
-@property (strong, nonatomic) UIView *recordView;
+@property (strong, nonatomic) RecordView *recordView;
+@property (strong, nonatomic) MoreView *moreView;
 
 @property (strong, nonatomic) NSFetchedResultsController *historyController;
 @property (strong, nonatomic) MyFetchedResultsControllerDelegate *historyControllerDelegate;
 
 @property (strong, nonatomic) AsyncUdpSocket *udpSocket;
-@property (strong, nonatomic) AudioCenter *audioCenter;
 @property (strong, nonatomic) MessageQueueManager *messageQueueManager;
 
 @property (strong, nonatomic) NSString *myPhotoPath;
@@ -59,7 +62,7 @@
     // init socket
     AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
     _udpSocket = appDelegate.udpSocket;
-    _ipStr = @"127.0.0.1";
+    _ipStr = @"10.8.51.18";
     
     _messageQueueManager = appDelegate.messageQueueManager;
     
@@ -91,14 +94,17 @@
     // init record view
     _screenSize = [UIScreen mainScreen].bounds.size;
     _showRecordView = NO;
-    _recordView = [[UIView alloc]initWithFrame:CGRectMake(0, _screenSize.height, _screenSize.width, RECORDVIEWHEIGHT)];
-    UIButton *recordBtn = [UIButton buttonWithType:UIButtonTypeContactAdd];
-    recordBtn.frame = CGRectMake(_screenSize.width / 2 - 10, RECORDVIEWHEIGHT / 2 - 10, 20, 20);
-    [recordBtn addTarget:self action:@selector(startRecord) forControlEvents:UIControlEventTouchDown];
-    [recordBtn addTarget:self action:@selector(stopRecord) forControlEvents:UIControlEventTouchUpInside];
-    [_recordView addSubview:recordBtn];
+    _recordView = [[NSBundle mainBundle]loadNibNamed:@"RecordView" owner:self options:nil].lastObject;
+    _recordView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, VIEWHEIGHT);
+    _recordView.ipStr = _ipStr;
+    _recordView.userID = _friendInfo.userID;
     [self.view addSubview:_recordView];
-    _audioCenter = [AudioCenter shareInstance];
+    
+    // init more view
+    _showMoreView = NO;
+    _moreView = [[NSBundle mainBundle]loadNibNamed:@"MoreView" owner:self options:nil].lastObject;
+    _moreView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, VIEWHEIGHT);
+    [self.view addSubview:_moreView];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -113,17 +119,26 @@
 
 #pragma mark -- IB actions
 - (IBAction)record:(id)sender {
+    [_messageTF resignFirstResponder];
+    if (_showMoreView) {
+        _baseBottomConstraint.constant = 0;
+        [UIView animateWithDuration:0.5 animations:^{
+            _moreView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, VIEWHEIGHT);
+            [self.view layoutIfNeeded];
+        }];
+        _showMoreView = NO;
+    }
     if (_showRecordView) {
         _baseBottomConstraint.constant = 0;
         [UIView animateWithDuration:0.5 animations:^{
-            _recordView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, RECORDVIEWHEIGHT);
+            _recordView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, VIEWHEIGHT);
             [self.view layoutIfNeeded];
         }];
         _showRecordView = NO;
     } else {
-        _baseBottomConstraint.constant = RECORDVIEWHEIGHT * -1;
+        _baseBottomConstraint.constant = VIEWHEIGHT * -1;
         [UIView animateWithDuration:0.5 animations:^{
-            _recordView.frame = CGRectMake(0, _screenSize.height - RECORDVIEWHEIGHT, _screenSize.width, RECORDVIEWHEIGHT);
+            _recordView.frame = CGRectMake(0, _screenSize.height - VIEWHEIGHT, _screenSize.width, VIEWHEIGHT);
             [self.view layoutIfNeeded];
         }];
         _showRecordView = YES;
@@ -136,37 +151,41 @@
         NSDate *date = [NSDate date];
         _messageTF.text = @"";
         [[DataManager shareManager]saveMessageWithUserID:_userID time:date body:message isOut:YES];
-    }
-    NSData *data = [[MessageProtocal shareInstance] archiveText:message];
-    if(![_udpSocket sendData:data toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
-        NSLog(@"ChatVC send text failed");
-    } else {
-        [_messageQueueManager addSendingMessage:_ipStr packetData:data];
+    
+        NSData *data = [[MessageProtocal shareInstance] archiveText:message];
+        if(![_udpSocket sendData:data toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
+            NSLog(@"ChatVC send text failed");
+        } else {
+            [_messageQueueManager addSendingMessage:_ipStr packetData:data];
+        }
     }
 }
 
 - (IBAction)more:(id)sender {
-    
-}
-
-- (void)startRecord {
-    NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
-    path = [path stringByAppendingPathComponent:[[Tool stringFromDate:[NSDate date]]stringByAppendingPathExtension:@"caf"]];
-    _audioCenter.path = path;
-    [_audioCenter startRecord];
-}
-
-- (void)stopRecord {
-    CGFloat during = [_audioCenter stopRecord];
-    [[DataManager shareManager]saveRecordWithUserID:_userID time:[NSDate date] path:_audioCenter.path length:[NSString stringWithFormat:@"%0.2f", during] isOut:YES];
-    NSArray *recordArr = [[MessageProtocal shareInstance]archiveRecord:_audioCenter.path during:[NSNumber numberWithFloat:during]];
-    for (NSData *pieceData in recordArr) {
-        if (![_udpSocket sendData:pieceData toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
-            NSLog(@"ChatVC send record failed");
-        } else {
-            [_messageQueueManager addSendingMessage:_ipStr packetData:pieceData];
-        }
-    }    
+    [_messageTF resignFirstResponder];
+    if (_showRecordView) {
+        _baseBottomConstraint.constant = 0;
+        [UIView animateWithDuration:0.5 animations:^{
+            _recordView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, VIEWHEIGHT);
+            [self.view layoutIfNeeded];
+        }];
+        _showRecordView = NO;
+    }
+    if (_showMoreView) {
+        _baseBottomConstraint.constant = 0;
+        [UIView animateWithDuration:0.5 animations:^{
+            _moreView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, VIEWHEIGHT);
+            [self.view layoutIfNeeded];
+        }];
+        _showMoreView = NO;
+    } else {
+        _baseBottomConstraint.constant = VIEWHEIGHT * -1;
+        [UIView animateWithDuration:0.5 animations:^{
+            _moreView.frame = CGRectMake(0, _screenSize.height - VIEWHEIGHT, _screenSize.width, VIEWHEIGHT);
+            [self.view layoutIfNeeded];
+        }];
+        _showMoreView = YES;
+    }
 }
 
 #pragma mark --table view data source
@@ -212,6 +231,8 @@
 
 #pragma mark --keyboard notification
 - (void)keyboardShow:(NSNotification *)notification {
+    _showMoreView = NO;
+    _showRecordView = NO;
     CGFloat height = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     _baseBottomConstraint.constant = height * -1;
     [UIView animateWithDuration:0.5 animations:^{

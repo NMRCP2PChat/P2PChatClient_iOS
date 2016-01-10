@@ -41,6 +41,10 @@
 		DA95D5B31C3A16E6001ED1A6 /* p2pChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DA95D5B21C3A16E6001ED1A6 /* p2pChatTests.m */; };
 		DA95D5BE1C3A16E6001ED1A6 /* p2pChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = DA95D5BD1C3A16E6001ED1A6 /* p2pChatUITests.m */; };
 		DAA67E3E1C3FACD50037C105 /* MessageQueueManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA67E3D1C3FACD50037C105 /* MessageQueueManager.m */; };
+		DAD235021C424CEE003A93F9 /* MoreView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAD235011C424CEE003A93F9 /* MoreView.xib */; };
+		DAD235051C424D05003A93F9 /* MoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD235041C424D05003A93F9 /* MoreView.m */; };
+		DAD235091C425347003A93F9 /* RecordView.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD235081C425347003A93F9 /* RecordView.m */; };
+		DAD2350B1C425355003A93F9 /* RecordView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAD2350A1C425355003A93F9 /* RecordView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,6 +126,12 @@
 		DA95D5BF1C3A16E6001ED1A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DAA67E3C1C3FACD50037C105 /* MessageQueueManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageQueueManager.h; sourceTree = "<group>"; };
 		DAA67E3D1C3FACD50037C105 /* MessageQueueManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageQueueManager.m; sourceTree = "<group>"; };
+		DAD235011C424CEE003A93F9 /* MoreView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MoreView.xib; sourceTree = "<group>"; };
+		DAD235031C424D05003A93F9 /* MoreView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreView.h; sourceTree = "<group>"; };
+		DAD235041C424D05003A93F9 /* MoreView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreView.m; sourceTree = "<group>"; };
+		DAD235071C425347003A93F9 /* RecordView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordView.h; sourceTree = "<group>"; };
+		DAD235081C425347003A93F9 /* RecordView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordView.m; sourceTree = "<group>"; };
+		DAD2350A1C425355003A93F9 /* RecordView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RecordView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +202,8 @@
 				DA9046C61C3A6668009E75B7 /* RegisterViewController.m */,
 				DA9046CB1C3A6698009E75B7 /* ChatViewController.h */,
 				DA9046CC1C3A6698009E75B7 /* ChatViewController.m */,
+				DAD2350C1C42535A003A93F9 /* RecordView */,
+				DAD235061C424D0E003A93F9 /* MoreView */,
 				DA258D2C1C3B6E9600AED768 /* Cells */,
 			);
 			name = Views;
@@ -286,6 +298,26 @@
 				DA9046A11C3A49AA009E75B7 /* LastMessage.m */,
 			);
 			name = DataStorage;
+			sourceTree = "<group>";
+		};
+		DAD235061C424D0E003A93F9 /* MoreView */ = {
+			isa = PBXGroup;
+			children = (
+				DAD235011C424CEE003A93F9 /* MoreView.xib */,
+				DAD235031C424D05003A93F9 /* MoreView.h */,
+				DAD235041C424D05003A93F9 /* MoreView.m */,
+			);
+			name = MoreView;
+			sourceTree = "<group>";
+		};
+		DAD2350C1C42535A003A93F9 /* RecordView */ = {
+			isa = PBXGroup;
+			children = (
+				DAD235071C425347003A93F9 /* RecordView.h */,
+				DAD235081C425347003A93F9 /* RecordView.m */,
+				DAD2350A1C425355003A93F9 /* RecordView.xib */,
+			);
+			name = RecordView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -395,6 +427,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				DA9046BF1C3A5601009E75B7 /* 0.png in Resources */,
+				DAD2350B1C425355003A93F9 /* RecordView.xib in Resources */,
+				DAD235021C424CEE003A93F9 /* MoreView.xib in Resources */,
 				DA258D281C3B6E8E00AED768 /* FriendRecordCell.xib in Resources */,
 				DA258D271C3B6E8E00AED768 /* FriendMessageCell.xib in Resources */,
 				DA95D5A81C3A16E6001ED1A6 /* LaunchScreen.storyboard in Resources */,
@@ -430,6 +464,7 @@
 				DA9046A61C3A49AA009E75B7 /* LastMessage+CoreDataProperties.m in Sources */,
 				DA9046B71C3A51A1009E75B7 /* MyFetchedResultsControllerDelegate.m in Sources */,
 				DA9046CD1C3A6698009E75B7 /* ChatViewController.m in Sources */,
+				DAD235051C424D05003A93F9 /* MoreView.m in Sources */,
 				DA9046CA1C3A668C009E75B7 /* FriendsViewController.m in Sources */,
 				DA9046AA1C3A49EB009E75B7 /* DataManager.m in Sources */,
 				DA95D59D1C3A16E6001ED1A6 /* RecentViewController.m in Sources */,
@@ -439,6 +474,7 @@
 				DA9046B61C3A51A1009E75B7 /* MessageProtocal.m in Sources */,
 				DA9046C41C3A663D009E75B7 /* LoginViewController.m in Sources */,
 				DA95D59A1C3A16E6001ED1A6 /* AppDelegate.m in Sources */,
+				DAD235091C425347003A93F9 /* RecordView.m in Sources */,
 				DA95D5A31C3A16E6001ED1A6 /* p2pChat.xcdatamodeld in Sources */,
 				DA258D2F1C3B6F2E00AED768 /* MessageCell.m in Sources */,
 				DA95D5971C3A16E6001ED1A6 /* main.m in Sources */,

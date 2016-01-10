@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="MoreView">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="200"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="agk-sT-Obe">
+                    <rect key="frame" x="61" y="85" width="49" height="30"/>
+                    <state key="normal" title="picture"/>
+                    <connections>
+                        <action selector="pickPicture:" destination="iN0-l3-epB" eventType="touchUpInside" id="c4f-7q-78h"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C3X-sd-Egy">
+                    <rect key="frame" x="186" y="85" width="40" height="30"/>
+                    <state key="normal" title="photo"/>
+                    <connections>
+                        <action selector="pickPhoto:" destination="iN0-l3-epB" eventType="touchUpInside" id="iXl-q6-Aci"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e2j-Ca-1dj">
+                    <rect key="frame" x="449" y="85" width="46" height="30"/>
+                    <state key="normal" title="Button"/>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xiR-mU-rlq">
+                    <rect key="frame" x="314" y="85" width="46" height="30"/>
+                    <state key="normal" title="Button"/>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="agk-sT-Obe" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="61" id="48Y-lZ-AfJ"/>
+                <constraint firstItem="C3X-sd-Egy" firstAttribute="leading" secondItem="agk-sT-Obe" secondAttribute="trailing" constant="8" symbolic="YES" id="MVx-sY-zuC"/>
+                <constraint firstItem="xiR-mU-rlq" firstAttribute="leading" secondItem="C3X-sd-Egy" secondAttribute="trailing" constant="8" symbolic="YES" id="PBW-1k-ex6"/>
+                <constraint firstItem="e2j-Ca-1dj" firstAttribute="leading" secondItem="xiR-mU-rlq" secondAttribute="trailing" constant="8" symbolic="YES" id="RqA-nz-cAZ"/>
+                <constraint firstItem="xiR-mU-rlq" firstAttribute="centerY" secondItem="C3X-sd-Egy" secondAttribute="centerY" id="YnO-UM-2uY"/>
+                <constraint firstItem="agk-sT-Obe" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="hnk-CE-9RE"/>
+                <constraint firstItem="xiR-mU-rlq" firstAttribute="centerY" secondItem="e2j-Ca-1dj" secondAttribute="centerY" id="y0q-6k-32C"/>
+                <constraint firstItem="C3X-sd-Egy" firstAttribute="centerY" secondItem="agk-sT-Obe" secondAttribute="centerY" id="zlk-fz-Abh"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="367" y="554"/>
+        </view>
+    </objects>
+</document>

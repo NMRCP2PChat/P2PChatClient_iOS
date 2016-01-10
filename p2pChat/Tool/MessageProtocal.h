@@ -18,9 +18,6 @@ typedef NS_ENUM (char, MessageProtocalType) {
     MessageProtocalTypeACK
 };
 
-#define MessageProtocalSendingNotification @"MessageProtocalSendingNotification"
-#define MessageProtocalDidSendNotification @"MessageProtocalDidSendNotification"
-
 @interface MessageProtocal : NSObject
 
 + (instancetype)shareInstance;
