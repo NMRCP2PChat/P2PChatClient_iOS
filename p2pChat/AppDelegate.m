@@ -159,15 +159,15 @@
             withTag:(long)tag
            fromHost:(NSString *)host
                port:(UInt16)port {
-    NSLog(@"%@", host);
+//    NSLog(@"%@", host);
     if (_dataManager.context == nil) {
         _dataManager.context = _managedObjectContext;
     }
     static int currentPos = 0;
     NSMutableData *wholeData = [[NSMutableData alloc]init];
     NSString *more = nil;
-    NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
     NSDate *date = [NSDate date];
+    NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
     //解析data，存储message
     unsigned char packetID = [_messageProtocal getPacketID:data];
     if (![_recentReceivePacket containsObject:[NSNumber numberWithChar:packetID]]) {
@@ -193,9 +193,10 @@
                     float during;
                     [_buffArr[0] getBytes:&during range:NSMakeRange(0, sizeof(float))];
                     more = [[NSString alloc]initWithFormat:@"%0.2f", during];
-                    for (int i = 1; i < wholeLength / 9000 + 2; i++) {
-                        [wholeData appendData:_buffArr[i]];
+                    for (NSData *data in _buffArr) {
+                        [wholeData appendData:data];
                     }
+                    
                     path = [path stringByAppendingPathComponent:[[Tool stringFromDate:date]stringByAppendingPathExtension:@"caf"]];
                     [wholeData writeToFile:path atomically:YES];
                     [_dataManager saveRecordWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date path:path length:more isOut:NO];
@@ -205,6 +206,17 @@
                 }
                 break;
             case MessageProtocalTypePicture:
+                _buffArr[pieceNum] = bodyData;
+                if (_buffArr.count == wholeLength / 9000 + 1) {
+                    for (NSData *data in _buffArr) {
+                        [wholeData appendData:data];
+                    }
+                    NSString *path = [self getFileName:@"thumbnail" extension:@"png"];
+                    [wholeData writeToFile:path atomically:YES];
+                    [_dataManager savePhotoWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date path:nil thumbnail:path isOut:NO];
+                    [_buffArr removeObjectsAtIndexes:[[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(0, _buffArr.count + 2)]];
+                }
+                break;
             case MessageProtocalTypeFile:
             case MessageProtocalTypeAudio:
             case MessageProtocalTypeVideo:
@@ -219,6 +231,18 @@
     }
     [sock receiveWithTimeout:-1 tag:0];
     return YES;
+}
+
+
+- (NSString *)getFileName:(NSString *)info extension:(NSString *)extension {
+    NSString *fileName = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
+    NSString *name = [Tool stringFromDate:[NSDate date]];
+    if (info != nil) {
+        name = [name stringByAppendingString:info];
+    }
+    name = [name stringByAppendingPathExtension:extension];
+    fileName = [fileName stringByAppendingPathComponent:name];
+    return fileName;
 }
 
 @end

@@ -64,8 +64,20 @@ static unsigned char packetID = 0;
     for (int i = 0; i < piece; i++) {
         [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 | (char)(i + 1) wholeLength:length length:PIECELENGTH body:[recordData subdataWithRange:NSMakeRange(i * PIECELENGTH, (i + 1) * PIECELENGTH)]]];
     }
-    [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 | (char)(piece + 1) wholeLength:length length:recordData.length - piece * PIECELENGTH body:[recordData subdataWithRange:NSMakeRange(piece * PIECELENGTH, recordData.length - piece * PIECELENGTH)]]];
+    [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 | (char)(piece + 1) wholeLength:length length:recordData.length - piece * PIECELENGTH body:[recordData subdataWithRange:NSMakeRange(piece * PIECELENGTH, length - piece * PIECELENGTH)]]];
     
+    return arr;
+}
+
+- (NSArray *)archiveThumbnail:(NSString *)path {
+    NSData *thumbnailData = [NSData dataWithContentsOfFile:path];
+    long length = thumbnailData.length;
+    int piece = length / PIECELENGTH;
+    NSMutableArray *arr = [[NSMutableArray alloc]init];
+    for (int i = 0; i < piece; i++) {
+        [arr addObject:[self archiveMessageWithType:MessageProtocalTypePicture << 4 | (char)i wholeLength:length length:PIECELENGTH body:[thumbnailData subdataWithRange:NSMakeRange(i * PIECELENGTH, PIECELENGTH)]]];
+    }
+    [arr addObject:[self archiveMessageWithType:MessageProtocalTypePicture << 4 | (char)(piece) wholeLength:length length:PIECELENGTH body:[thumbnailData subdataWithRange:NSMakeRange((piece - 1) * PIECELENGTH, length - piece * PIECELENGTH)]]];
     return arr;
 }
 

@@ -17,7 +17,6 @@
 @interface RecordView () {
     AudioCenter *_audioCenter;
 }
-
 @end
 
 @implementation RecordView
@@ -38,7 +37,7 @@
     NSArray *recordArr = [[MessageProtocal shareInstance]archiveRecord:_audioCenter.path during:[NSNumber numberWithFloat:during]];
     for (NSData *pieceData in recordArr) {
         if (![udpSocket sendData:pieceData toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
-            NSLog(@"ChatVC send record failed");
+            NSLog(@"RecordView send record failed");
         } else {
             [[MessageQueueManager shareInstance] addSendingMessage:_ipStr packetData:pieceData];
         }

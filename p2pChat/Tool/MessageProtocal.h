@@ -26,12 +26,13 @@ typedef NS_ENUM (char, MessageProtocalType) {
 
 - (NSData *)archiveText:(NSString *)body;
 - (NSArray *)archiveRecord:(NSString *)path during:(NSNumber *)during;
+- (NSArray *)archiveThumbnail:(NSString *)path;
 
-- (int)getPacketID:(NSData *)data;
+- (int)getPacketID:(NSData *)data;// 包id
 - (unsigned short)getUserID:(NSData *)data;
 - (char)getMessageType:(NSData *)data;
-- (int)getPieceNum:(NSData *)data;
-- (unsigned int)getWholeLength:(NSData *)data;
+- (int)getPieceNum:(NSData *)data;// 包内分片序号
+- (unsigned int)getWholeLength:(NSData *)data;// 包总长 （区别分片总长）
 - (NSData *)getBodyData:(NSData *)data;
 - (unsigned char)getACKID:(NSData *)data;
 

@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-@interface MoreView : UIView <UIImagePickerControllerDelegate>
+@interface MoreView : UIView <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+
+@property (strong, nonatomic) NSNumber *userID;
+@property (strong, nonatomic) NSString *ipStr;
 
 @end

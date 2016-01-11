@@ -26,6 +26,8 @@
 #define FriendMessageCell @"friend message"
 #define MyRecordCell @"my record"
 #define FriendRecordCell @"friend record"
+#define MyPhotoCell @"my photo"
+#define FriendPhotoCell @"friend photo"
 
 @interface ChatViewController () <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate> {
     NSString *_name;
@@ -62,7 +64,7 @@
     // init socket
     AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
     _udpSocket = appDelegate.udpSocket;
-    _ipStr = @"10.8.51.18";
+    _ipStr = @"127.0.0.1";
     
     _messageQueueManager = appDelegate.messageQueueManager;
     
@@ -76,11 +78,7 @@
     _historyController = [[DataManager shareManager]getMessageByUserID:_userID];
     _historyControllerDelegate = [[MyFetchedResultsControllerDelegate alloc]initWithTableView:_historyTableView];
     _historyController.delegate = _historyControllerDelegate;
-    
-//    for (Message *msg in _historyController.fetchedObjects) {
-//        NSLog(@"%@", msg.isOut);
-//    }
-    
+
     // init text field
     _messageTF.delegate = self;
     
@@ -89,6 +87,8 @@
     [_historyTableView registerNib:[UINib nibWithNibName:@"FriendMessageCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:FriendMessageCell];
     [_historyTableView registerNib:[UINib nibWithNibName:@"MyRecordCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:MyRecordCell];
     [_historyTableView registerNib:[UINib nibWithNibName:@"FriendRecordCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:FriendRecordCell];
+    [_historyTableView registerNib:[UINib nibWithNibName:@"MyPhotoCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:MyPhotoCell];
+    [_historyTableView registerNib:[UINib nibWithNibName:@"FriendPhotoCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:FriendPhotoCell];
     _myPhotoPath = [[NSUserDefaults standardUserDefaults]stringForKey:@"photoPath"];
     
     // init record view
@@ -97,13 +97,15 @@
     _recordView = [[NSBundle mainBundle]loadNibNamed:@"RecordView" owner:self options:nil].lastObject;
     _recordView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, VIEWHEIGHT);
     _recordView.ipStr = _ipStr;
-    _recordView.userID = _friendInfo.userID;
+    _recordView.userID = _userID;
     [self.view addSubview:_recordView];
     
     // init more view
     _showMoreView = NO;
     _moreView = [[NSBundle mainBundle]loadNibNamed:@"MoreView" owner:self options:nil].lastObject;
     _moreView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, VIEWHEIGHT);
+    _moreView.ipStr = _ipStr;
+    _moreView.userID = _userID;
     [self.view addSubview:_moreView];
 }
 
@@ -201,22 +203,29 @@
     switch (type) {
         case MessageProtocalTypeMessage:
             if (message.isOut.boolValue) {
-                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:@"my message" forIndexPath:indexPath];
+                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:MyMessageCell forIndexPath:indexPath];
                 [cell setPhotoPath:_myPhotoPath time:message.time body:message.body more:nil];
             } else {
-                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:@"friend message" forIndexPath:indexPath];
+                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:FriendMessageCell forIndexPath:indexPath];
                 [cell setPhotoPath:_photoPath time:message.time body:message.body more:nil];
             }
             break;
         case MessageProtocalTypeRecord:
             if (message.isOut.boolValue) {
-                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:@"my record" forIndexPath:indexPath];
+                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:MyRecordCell forIndexPath:indexPath];
                 [cell setPhotoPath:_myPhotoPath time:message.time body:nil more:message.more];
             } else {
-                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:@"friend record" forIndexPath:indexPath];
+                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:FriendRecordCell forIndexPath:indexPath];
                 [cell setPhotoPath:_photoPath time:message.time body:nil more:message.more];
             }
-            
+        case MessageProtocalTypePicture:
+            if (message.isOut.boolValue) {
+                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:MyPhotoCell forIndexPath:indexPath];
+                [cell setPhotoPath:_myPhotoPath bodyPath:message.more];
+            } else {
+                cell = (MessageCell *)[_historyTableView dequeueReusableCellWithIdentifier:FriendPhotoCell forIndexPath:indexPath];
+                [cell setPhotoPath:_photoPath bodyPath:message.more];
+            }
         default:
             break;
     }

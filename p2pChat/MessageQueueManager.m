@@ -34,20 +34,20 @@
 }
 
 - (void)addSendingMessage:(NSString *)ipStr packetData:(NSData *)data {
-    unsigned int packetID = [[MessageProtocal shareInstance]getPacketID:data];
+    unsigned char packetID = [[MessageProtocal shareInstance]getPacketID:data];
     NSDictionary *packetInfo = @{@"ipStr" : ipStr, @"data" : data};
-    _sendingQueue[[NSNumber numberWithUnsignedInt:packetID]] = packetInfo;
+    _sendingQueue[[NSNumber numberWithChar:packetID]] = packetInfo;
     [_timer setFireDate:[NSDate date]];
 //    NSLog(@"sending queue number: %d", _sendingQueue.allKeys.count);
 }
 
 - (void)messageSended:(unsigned int)packetID {
-    [_sendingQueue removeObjectForKey:[NSNumber numberWithUnsignedInt:packetID]];
+    [_sendingQueue removeObjectForKey:[NSNumber numberWithChar:packetID]];
 //    NSLog(@"sending queue number: %d", _sendingQueue.allKeys.count);
 }
 
 - (void)sendAgain {
-    NSLog(@"MessageQueueManager send again");
+//    NSLog(@"MessageQueueManager send again");
     NSArray *keys = _sendingQueue.allKeys;
     for (NSNumber *key in keys) {
         NSDictionary *dic = _sendingQueue[key];

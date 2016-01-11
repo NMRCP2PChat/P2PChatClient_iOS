@@ -55,4 +55,16 @@
     
 }
 
++ (NSString *)getFileName:(NSString *)info extension:(NSString *)extension {
+    NSString *fileName = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
+    NSString *name = [Tool stringFromDate:[NSDate date]];
+    if (info != nil) {
+        name = [name stringByAppendingString:info];
+    }
+    name = [name stringByAppendingPathExtension:extension];
+    fileName = [fileName stringByAppendingPathComponent:name];
+    
+    return fileName;
+}
+
 @end

@@ -11,5 +11,6 @@
 @interface MessageCell : UITableViewCell
 
 - (void)setPhotoPath:(NSString *)path time:(NSDate *)time body:(NSString *)body more:(NSString *)more;
+- (void)setPhotoPath:(NSString *)photoPath bodyPath:(NSString *)thumbnailPath;
 
 @end

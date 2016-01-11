@@ -15,13 +15,13 @@
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *bodyLabel;
 @property (weak, nonatomic) IBOutlet UILabel *moreLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *bodyImage;
 
 @end
 
 @implementation MessageCell
 
 - (void)setPhotoPath:(NSString *)path time:(NSDate *)time body:(NSString *)body more:(NSString *)more {
-
     [_photoImageView setImage:[UIImage imageWithContentsOfFile:path]];
     [_timeLabel setText:[Tool stringFromDate:time]];
     [_moreLabel setText:more];
@@ -47,5 +47,10 @@
     UILabel *label = [[UILabel alloc]initWithFrame:frame];
     label.backgroundColor = [UIColor greenColor];
     [self addSubview:label];
+}
+
+- (void)setPhotoPath:(NSString *)photoPath bodyPath:(NSString *)thumbnailPath {
+    [_photoImageView setImage:[UIImage imageWithContentsOfFile:photoPath]];
+    [_bodyImage setImage:[UIImage imageWithContentsOfFile:thumbnailPath]];
 }
 @end

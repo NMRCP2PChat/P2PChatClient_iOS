@@ -13,6 +13,8 @@
 		DA258D2A1C3B6E8E00AED768 /* MyMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA258D251C3B6E8E00AED768 /* MyMessageCell.xib */; };
 		DA258D2B1C3B6E8E00AED768 /* MyRecordCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA258D261C3B6E8E00AED768 /* MyRecordCell.xib */; };
 		DA258D2F1C3B6F2E00AED768 /* MessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DA258D2E1C3B6F2E00AED768 /* MessageCell.m */; };
+		DA879C121C4397260044B865 /* MyPhotoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA879C111C4397260044B865 /* MyPhotoCell.xib */; };
+		DA879C141C4397350044B865 /* FriendPhotoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA879C131C4397350044B865 /* FriendPhotoCell.xib */; };
 		DA9046A21C3A49AA009E75B7 /* Friend+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046971C3A49AA009E75B7 /* Friend+CoreDataProperties.m */; };
 		DA9046A31C3A49AA009E75B7 /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = DA9046991C3A49AA009E75B7 /* Friend.m */; };
 		DA9046A41C3A49AA009E75B7 /* Message+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = DA90469B1C3A49AA009E75B7 /* Message+CoreDataProperties.m */; };
@@ -73,6 +75,8 @@
 		DA258D261C3B6E8E00AED768 /* MyRecordCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MyRecordCell.xib; path = cells/MyRecordCell.xib; sourceTree = "<group>"; };
 		DA258D2D1C3B6F2E00AED768 /* MessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageCell.h; path = cells/MessageCell.h; sourceTree = "<group>"; };
 		DA258D2E1C3B6F2E00AED768 /* MessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MessageCell.m; path = cells/MessageCell.m; sourceTree = "<group>"; };
+		DA879C111C4397260044B865 /* MyPhotoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MyPhotoCell.xib; sourceTree = "<group>"; };
+		DA879C131C4397350044B865 /* FriendPhotoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FriendPhotoCell.xib; sourceTree = "<group>"; };
 		DA9046961C3A49AA009E75B7 /* Friend+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Friend+CoreDataProperties.h"; path = "dataStorage/Friend+CoreDataProperties.h"; sourceTree = "<group>"; };
 		DA9046971C3A49AA009E75B7 /* Friend+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Friend+CoreDataProperties.m"; path = "dataStorage/Friend+CoreDataProperties.m"; sourceTree = "<group>"; };
 		DA9046981C3A49AA009E75B7 /* Friend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Friend.h; path = dataStorage/Friend.h; sourceTree = "<group>"; };
@@ -166,8 +170,10 @@
 				DA258D2E1C3B6F2E00AED768 /* MessageCell.m */,
 				DA258D211C3B6E8E00AED768 /* FriendMessageCell.xib */,
 				DA258D221C3B6E8E00AED768 /* FriendRecordCell.xib */,
+				DA879C131C4397350044B865 /* FriendPhotoCell.xib */,
 				DA258D251C3B6E8E00AED768 /* MyMessageCell.xib */,
 				DA258D261C3B6E8E00AED768 /* MyRecordCell.xib */,
+				DA879C111C4397260044B865 /* MyPhotoCell.xib */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -430,10 +436,12 @@
 				DAD2350B1C425355003A93F9 /* RecordView.xib in Resources */,
 				DAD235021C424CEE003A93F9 /* MoreView.xib in Resources */,
 				DA258D281C3B6E8E00AED768 /* FriendRecordCell.xib in Resources */,
+				DA879C141C4397350044B865 /* FriendPhotoCell.xib in Resources */,
 				DA258D271C3B6E8E00AED768 /* FriendMessageCell.xib in Resources */,
 				DA95D5A81C3A16E6001ED1A6 /* LaunchScreen.storyboard in Resources */,
 				DA95D5A51C3A16E6001ED1A6 /* Assets.xcassets in Resources */,
 				DA258D2A1C3B6E8E00AED768 /* MyMessageCell.xib in Resources */,
+				DA879C121C4397260044B865 /* MyPhotoCell.xib in Resources */,
 				DA95D5A01C3A16E6001ED1A6 /* Main.storyboard in Resources */,
 				DA9046C01C3A5601009E75B7 /* 1.png in Resources */,
 				DA258D2B1C3B6E8E00AED768 /* MyRecordCell.xib in Resources */,
