@@ -16,7 +16,7 @@
 - (id)initWithSocket:(AsyncUdpSocket *)udpSocket timer:(NSTimer *)timer;
 + (instancetype)shareInstance;
 
-- (void)addSendingMessage:(NSString *)ipStr packetData:(NSData *)data;
+- (void)addSendingMessageIP:(NSString *)ipStr packetData:(NSData *)data;
 - (void)messageSended:(unsigned int)packetID;
 - (void)sendAgain;
 

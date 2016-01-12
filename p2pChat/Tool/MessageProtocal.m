@@ -9,11 +9,10 @@
 #import "MessageProtocal.h"
 #import "AppDelegate.h"
 
-#define PIECELENGTH 9000
-
 @implementation MessageProtocal
 
 static unsigned char packetID = 0;
+static unsigned char picID = 0;
 
 +(instancetype)shareInstance {
     AppDelegate *delegate = [UIApplication sharedApplication].delegate;
@@ -22,13 +21,15 @@ static unsigned char packetID = 0;
 }
 
 - (NSData *)archiveMessageWithType:(char)type wholeLength:(int)wholeLength length:(unsigned short)length body:(NSData *)body {
-    packetID = (packetID + 1) % 256;
+    packetID++;
+    packetID = packetID % 256;
     NSMutableData *data = [[NSMutableData alloc]init];
     NSNumber *userIDInteger = [[NSUserDefaults standardUserDefaults] objectForKey:@"userID"];
     unsigned short userID = [userIDInteger unsignedShortValue];
-    [data appendBytes:&packetID length:sizeof(unsigned char)];
+    
     [data appendBytes:&type length:sizeof(char)];
     [data appendBytes:&userID length:sizeof(unsigned short)];
+    [data appendBytes:&packetID length:sizeof(unsigned char)];
     [data appendBytes:&wholeLength length:sizeof(int)];
     [data appendBytes:&length length:sizeof(unsigned short)];
     [data appendBytes:body.bytes length:body.length];
@@ -37,9 +38,7 @@ static unsigned char packetID = 0;
 
 - (NSData *)archiveACK:(unsigned char)receivePacketID {
     NSMutableData *data = [[NSMutableData alloc]init];
-    unsigned char packetID = 0;
     char type = MessageProtocalTypeACK << 4;
-    [data appendBytes:&packetID length:sizeof(unsigned char)];
     [data appendBytes:&type length:sizeof(char)];
     [data appendBytes:&receivePacketID length:sizeof(unsigned char)];
     return data;
@@ -57,14 +56,13 @@ static unsigned char packetID = 0;
     NSMutableArray *arr = [[NSMutableArray alloc]init];
     float time = [during floatValue];
     
-    NSMutableData *infoData = [[NSMutableData alloc]init];
-    [infoData appendBytes:&time length:sizeof(float)];
+    NSMutableData *infoData = [[NSMutableData alloc]initWithBytes:&time length:sizeof(float)];
     [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 wholeLength:length length:infoData.length body:infoData]];
     
     for (int i = 0; i < piece; i++) {
         [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 | (char)(i + 1) wholeLength:length length:PIECELENGTH body:[recordData subdataWithRange:NSMakeRange(i * PIECELENGTH, PIECELENGTH)]]];
     }
-    [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 | (char)(piece + 1) wholeLength:length length:recordData.length - piece * PIECELENGTH body:[recordData subdataWithRange:NSMakeRange(piece * PIECELENGTH, length - piece * PIECELENGTH)]]];
+    [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 | (char)(piece + 1) wholeLength:length length:length - piece * PIECELENGTH body:[recordData subdataWithRange:NSMakeRange(piece * PIECELENGTH, length - piece * PIECELENGTH)]]];
     
     return arr;
 }
@@ -74,59 +72,63 @@ static unsigned char packetID = 0;
     long length = thumbnailData.length;
     int piece = length / PIECELENGTH;
     NSMutableArray *arr = [[NSMutableArray alloc]init];
+    NSMutableData *picIDData = [[NSMutableData alloc]initWithBytes:&picID length:sizeof(unsigned char)];
+    picID++;
+    [arr addObject:[self archiveMessageWithType:MessageProtocalTypePicture << 4 wholeLength:length length:picIDData.length body:picIDData]];
     for (int i = 0; i < piece; i++) {
-        [arr addObject:[self archiveMessageWithType:MessageProtocalTypePicture << 4 | (char)i wholeLength:length length:PIECELENGTH body:[thumbnailData subdataWithRange:NSMakeRange(i * PIECELENGTH, PIECELENGTH)]]];
+        [arr addObject:[self archiveMessageWithType:MessageProtocalTypePicture << 4 | (char)(i + 1) wholeLength:length length:PIECELENGTH body:[thumbnailData subdataWithRange:NSMakeRange(i * PIECELENGTH, PIECELENGTH)]]];
     }
-    [arr addObject:[self archiveMessageWithType:MessageProtocalTypePicture << 4 | (char)(piece) wholeLength:length length:PIECELENGTH body:[thumbnailData subdataWithRange:NSMakeRange((piece - 1) * PIECELENGTH, length - piece * PIECELENGTH)]]];
+    [arr addObject:[self archiveMessageWithType:MessageProtocalTypePicture << 4 | (char)(piece + 1) wholeLength:length length:length - piece * PIECELENGTH body:[thumbnailData subdataWithRange:NSMakeRange((piece - 1) * PIECELENGTH, length - piece * PIECELENGTH)]]];
     return arr;
-}
-
-- (int)getPacketID:(NSData *)data {
-    int packetID;
-    [data getBytes:&packetID range:NSMakeRange(0, sizeof(unsigned char))];
-    
-    return packetID;
 }
 
 - (char)getMessageType:(NSData *)data {
     char type;
-    [data getBytes:&type range:NSMakeRange(sizeof(unsigned char), sizeof(char))];
+    [data getBytes:&type range:NSMakeRange(0, sizeof(char))];
     
     return type >> 4;
 }
 
 - (int)getPieceNum:(NSData *)data {
     char order;
-    [data getBytes:&order range:NSMakeRange(sizeof(unsigned char), sizeof(char))];
+    [data getBytes:&order range:NSMakeRange(0, sizeof(char))];
     
     return order & 15;
 }
 
 - (unsigned short)getUserID:(NSData *)data {
     unsigned short userID;
-    [data getBytes:&userID range:NSMakeRange(sizeof(unsigned char) + sizeof(char), sizeof(unsigned short))];
+    [data getBytes:&userID range:NSMakeRange(sizeof(unsigned char), sizeof(unsigned short))];
     
     return userID;
 }
 
+- (int)getPacketID:(NSData *)data {
+    int packetID;
+    [data getBytes:&packetID range:NSMakeRange(sizeof(char) + sizeof(unsigned short), sizeof(unsigned char))];
+    
+    return packetID;
+}
+
 - (unsigned int)getWholeLength:(NSData *)data {
     unsigned int length;
-    [data getBytes:&length range:NSMakeRange(sizeof(unsigned char)  + sizeof(unsigned short) + sizeof(char), sizeof(unsigned int))];
+    [data getBytes:&length range:NSMakeRange(sizeof(char) * 2 + sizeof(unsigned short), sizeof(unsigned int))];
     
     return length;
 }
 
 - (NSData *)getBodyData:(NSData *)data {
     unsigned short len;
-    [data getBytes:&len range:NSMakeRange(sizeof(unsigned char) + sizeof(char) + sizeof(unsigned short) + sizeof(unsigned int), sizeof(unsigned short))];
-    NSData *strData = [data subdataWithRange:NSMakeRange(sizeof(unsigned char) + sizeof(char) + sizeof(unsigned short) + sizeof(unsigned int) + sizeof(unsigned short), len)];
+    [data getBytes:&len range:NSMakeRange(sizeof(char) *2 + sizeof(unsigned short) + sizeof(unsigned int), sizeof(unsigned short))];
+    NSData *strData = [data subdataWithRange:NSMakeRange(sizeof(char) * 2 + sizeof(unsigned short) * 2 + sizeof(unsigned int), len)];
 
     return strData;
 }
 
 - (unsigned char)getACKID:(NSData *)data {
     unsigned char ackID;
-    [data getBytes:&ackID range:NSMakeRange(sizeof(unsigned char) + sizeof(char), sizeof(unsigned char))];
+    [data getBytes:&ackID range:NSMakeRange(sizeof(char), sizeof(unsigned char))];
+    
     return ackID;
 }
 

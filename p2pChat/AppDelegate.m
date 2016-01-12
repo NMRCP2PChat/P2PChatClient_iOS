@@ -17,7 +17,8 @@
 
 @property (strong, nonatomic) NSMutableArray *buffArr;//缓存数组
 
-@property (strong, nonatomic) NSMutableArray *recentReceivePacket;
+@property (strong, nonatomic) NSMutableArray *recentMessageQueue;
+@property (strong, nonatomic) NSMutableDictionary<NSNumber *, NSString *> *uncomparedPic;
 
 @property (strong, nonatomic) NSTimer *scanMessageQueueTimer;
 
@@ -36,7 +37,8 @@
     _dataManager = [[DataManager alloc]init];
     
     _buffArr = [[NSMutableArray alloc]initWithCapacity:15];
-    _recentReceivePacket = [[NSMutableArray alloc]initWithCapacity:50];
+    _recentMessageQueue = [[NSMutableArray alloc]initWithCapacity:50];
+    _uncomparedPic = [[NSMutableDictionary alloc]init];
     
     _scanMessageQueueTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(scanMessageQueue) userInfo:nil repeats:YES];
     [_scanMessageQueueTimer setFireDate:[NSDate distantFuture]];
@@ -167,82 +169,76 @@
     NSMutableData *wholeData = [[NSMutableData alloc]init];
     NSString *more = nil;
     NSDate *date = [NSDate date];
-    NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
+
     //解析data，存储message
-    unsigned char packetID = [_messageProtocal getPacketID:data];
-    if (![_recentReceivePacket containsObject:[NSNumber numberWithChar:packetID]]) {
-        MessageProtocalType type = [_messageProtocal getMessageType:data];
-        unsigned int wholeLength = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getWholeLength:data];
-        int pieceNum = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getPieceNum:data];
-        //    unsigned short userId = [_messageProtocal getUserID:data];
-        unsigned short userId = 234;
-        NSData *bodyData = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getBodyData:data];
-
-        if (type != MessageProtocalTypeACK) {
-            [_udpSocket sendData:[_messageProtocal archiveACK:packetID] toHost:host port:1234 withTimeout:-1 tag:0];
-            [_recentReceivePacket insertObject:[NSNumber numberWithChar:packetID] atIndex:currentPos++ % 20];
+    MessageProtocalType type = [_messageProtocal getMessageType:data];
+//    unsigned short userId = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getUserID:data];
+    unsigned short userId = 234;
+    unsigned char packetID = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getPacketID:data];
+    if (type != MessageProtocalTypeACK) {
+        [_udpSocket sendData:[_messageProtocal archiveACK:packetID] toHost:host port:1234 withTimeout:-1 tag:0];
+        int messageID = userId << 16 | packetID;
+        if ([_recentMessageQueue containsObject:[NSNumber numberWithInt:messageID]]) {
+            [sock receiveWithTimeout:-1 tag:0];
+            return YES;
         }
+        [_recentMessageQueue insertObject:[NSNumber numberWithInt:messageID] atIndex:currentPos++ % 20];
+    }    
+    unsigned int wholeLength = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getWholeLength:data];
+    int pieceNum = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getPieceNum:data];
+    NSData *bodyData = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getBodyData:data];
 
-        switch (type) {
-            case MessageProtocalTypeMessage:
-                [_dataManager saveMessageWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date body:[[NSString alloc]initWithData:bodyData encoding:NSUTF8StringEncoding] isOut:NO];
-                break;
-            case MessageProtocalTypeRecord:
-                _buffArr[pieceNum] = bodyData;
-                if ([_buffArr count] == wholeLength / 9000 + 2) {
-                    float during;
-                    [_buffArr[0] getBytes:&during range:NSMakeRange(0, sizeof(float))];
-                    more = [[NSString alloc]initWithFormat:@"%0.2f", during];
-                    for (int i = 1; i < _buffArr.count; i++) {
-                        [wholeData appendData:_buffArr[i]];
-                    }
-                    
-                    path = [path stringByAppendingPathComponent:[[Tool stringFromDate:date]stringByAppendingPathExtension:@"caf"]];
-                    [wholeData writeToFile:path atomically:YES];
-                    [_dataManager saveRecordWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date path:path length:more isOut:NO];
-                    [_buffArr removeObjectsAtIndexes:[[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(0, wholeLength / 9000 + 2)]];
-                    _audioCenter.path = path;
-                    [_audioCenter startPlay];
+    switch (type) {
+        case MessageProtocalTypeMessage:
+            [_dataManager saveMessageWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date body:[[NSString alloc]initWithData:bodyData encoding:NSUTF8StringEncoding] isOut:NO];
+            break;
+        case MessageProtocalTypeRecord:
+            _buffArr[pieceNum] = bodyData;
+            if ([_buffArr count] == wholeLength / PIECELENGTH + 2) {
+                float during;
+                [_buffArr[0] getBytes:&during range:NSMakeRange(0, sizeof(float))];
+                more = [[NSString alloc]initWithFormat:@"%0.2f", during];
+                for (int i = 1; i < _buffArr.count; i++) {
+                    [wholeData appendData:_buffArr[i]];
                 }
-                break;
-            case MessageProtocalTypePicture:
-                _buffArr[pieceNum] = bodyData;
-                if (_buffArr.count == wholeLength / 9000 + 1) {
-                    for (NSData *data in _buffArr) {
-                        [wholeData appendData:data];
-                    }
-                    NSString *path = [self getFileName:@"thumbnail" extension:@"png"];
-                    [wholeData writeToFile:path atomically:YES];
-                    [_dataManager savePhotoWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date path:nil thumbnail:path isOut:NO];
-                    [_buffArr removeObjectsAtIndexes:[[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(0, _buffArr.count + 2)]];
+                NSString *path = [Tool getFileName:@"receive" extension:@"caf"];
+                [wholeData writeToFile:path atomically:YES];
+                [_dataManager saveRecordWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date path:path length:more isOut:NO];
+                [_buffArr removeObjectsAtIndexes:[[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(0, _buffArr.count)]];
+                _audioCenter.path = path;
+                [_audioCenter startPlay];
+            }
+            break;
+        case MessageProtocalTypePicture:
+            _buffArr[pieceNum] = bodyData;
+            if (_buffArr.count == wholeLength / PIECELENGTH + 2) {
+                int picID;
+                [_buffArr[0] getBytes:&picID length:sizeof(char)];
+                picID = userId << 16 | picID;
+                for (int i = 1; i < _buffArr.count; i++) {
+                    [wholeData appendData:_buffArr[i]];
                 }
-                break;
-            case MessageProtocalTypeFile:
-            case MessageProtocalTypeAudio:
-            case MessageProtocalTypeVideo:
-            case MessageProtocalTypeACK:
-        //            NSLog(@"received ack!");
-                [_messageQueueManager messageSended:[_messageProtocal getACKID:data]];
-                if (_messageQueueManager.sendingQueue.allKeys.count == 0) {
-                    [_scanMessageQueueTimer setFireDate:[NSDate distantFuture]];
-                }
-                break;
-        }
+                NSString *path = [Tool getFileName:@"thumbnail" extension:@"png"];
+                [wholeData writeToFile:path atomically:YES];
+                [_dataManager savePhotoWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date path:nil thumbnail:path isOut:NO];
+                [_buffArr removeObjectsAtIndexes:[[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(0, _buffArr.count)]];
+                _uncomparedPic[[NSNumber numberWithInt:picID]] = path;
+            }
+            break;
+        case MessageProtocalTypeFile:
+        case MessageProtocalTypeAudio:
+        case MessageProtocalTypeVideo:
+        case MessageProtocalTypeACK:
+    //            NSLog(@"received ack!");
+            [_messageQueueManager messageSended:[_messageProtocal getACKID:data]];
+            if (_messageQueueManager.sendingQueue.allKeys.count == 0) {
+                [_scanMessageQueueTimer setFireDate:[NSDate distantFuture]];
+            }
+            break;
+        
     }
     [sock receiveWithTimeout:-1 tag:0];
     return YES;
-}
-
-
-- (NSString *)getFileName:(NSString *)info extension:(NSString *)extension {
-    NSString *fileName = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
-    NSString *name = [Tool stringFromDate:[NSDate date]];
-    if (info != nil) {
-        name = [name stringByAppendingString:info];
-    }
-    name = [name stringByAppendingPathExtension:extension];
-    fileName = [fileName stringByAppendingPathComponent:name];
-    return fileName;
 }
 
 @end

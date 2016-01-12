@@ -18,6 +18,8 @@ typedef NS_ENUM (char, MessageProtocalType) {
     MessageProtocalTypeACK
 };
 
+#define PIECELENGTH 9000
+
 @interface MessageProtocal : NSObject
 
 + (instancetype)shareInstance;

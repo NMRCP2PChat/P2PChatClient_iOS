@@ -8,10 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
+@class AsyncUdpSocket;
 
 @interface MoreView : UIView <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
 @property (strong, nonatomic) NSNumber *userID;
 @property (strong, nonatomic) NSString *ipStr;
+
+@property (strong, nonatomic) AsyncUdpSocket *udpSocket;
 
 @end

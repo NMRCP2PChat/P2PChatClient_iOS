@@ -33,7 +33,7 @@
     return delegate.messageQueueManager;
 }
 
-- (void)addSendingMessage:(NSString *)ipStr packetData:(NSData *)data {
+- (void)addSendingMessageIP:(NSString *)ipStr packetData:(NSData *)data {
     unsigned char packetID = [[MessageProtocal shareInstance]getPacketID:data];
     NSDictionary *packetInfo = @{@"ipStr" : ipStr, @"data" : data};
     _sendingQueue[[NSNumber numberWithChar:packetID]] = packetInfo;

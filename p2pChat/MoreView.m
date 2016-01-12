@@ -10,7 +10,8 @@
 #import "Tool.h"
 #import "MessageProtocal.h"
 #import "DataManager.h"
-#import "AppDelegate.h"
+#import "AsyncUdpSocket.h"
+#import "MessageQueueManager.h"
 
 @interface MoreView ()
 
@@ -70,18 +71,19 @@
     thumbnail = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     _thumbnailImagePath = [Tool getFileName:@"thumbnail" extension:@"png"];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [UIImagePNGRepresentation(thumbnail) writeToFile:_thumbnailImagePath atomically:YES];
-        [[DataManager shareManager]savePhotoWithUserID:_userID time:[NSDate date] path:_originalImagePath thumbnail:_thumbnailImagePath isOut:YES];
-        AppDelegate *delegate = [UIApplication sharedApplication].delegate;
-        AsyncUdpSocket *udpSocket = delegate.udpSocket;
-        NSArray *arr = [[MessageProtocal shareInstance]archiveThumbnail:_thumbnailImagePath];
-        for (NSData *data in arr) {
-            if (![udpSocket sendData:data toHost:_ipStr port:1234 withTimeout:-1 tag:0]) {
-                NSLog(@"MoreView send pic failed");
-            }            
+
+    [UIImagePNGRepresentation(thumbnail) writeToFile:_thumbnailImagePath atomically:YES];
+    [[DataManager shareManager]savePhotoWithUserID:_userID time:[NSDate date] path:_originalImagePath thumbnail:_thumbnailImagePath isOut:YES];
+    
+    NSArray *arr = [[MessageProtocal shareInstance]archiveThumbnail:_thumbnailImagePath];
+    for (NSData *data in arr) {
+        if (![_udpSocket sendData:data toHost:_ipStr port:1234 withTimeout:-1 tag:0]) {
+            NSLog(@"MoreView send pic failed");
+        } else {
+            [[MessageQueueManager shareInstance]addSendingMessageIP:_ipStr packetData:data];
         }
-    });
+    }
+
 }
 
 - (void)initPreview {

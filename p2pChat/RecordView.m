@@ -22,8 +22,7 @@
 @implementation RecordView
 
 - (IBAction)startRecord:(id)sender {
-    NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject;
-    path = [path stringByAppendingPathComponent:[[Tool stringFromDate:[NSDate date]]stringByAppendingPathExtension:@"caf"]];
+    NSString *path = [Tool getFileName:@"send" extension:@"caf"];
     _audioCenter = [AudioCenter shareInstance];
     _audioCenter.path = path;
     [_audioCenter startRecord];
@@ -39,7 +38,7 @@
         if (![udpSocket sendData:pieceData toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
             NSLog(@"RecordView send record failed");
         } else {
-            [[MessageQueueManager shareInstance] addSendingMessage:_ipStr packetData:pieceData];
+            [[MessageQueueManager shareInstance] addSendingMessageIP:_ipStr packetData:pieceData];
         }
     }
 }

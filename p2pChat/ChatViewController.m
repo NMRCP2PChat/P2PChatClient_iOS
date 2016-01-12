@@ -106,6 +106,7 @@
     _moreView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, VIEWHEIGHT);
     _moreView.ipStr = _ipStr;
     _moreView.userID = _userID;
+    _moreView.udpSocket = _udpSocket;
     [self.view addSubview:_moreView];
 }
 
@@ -158,7 +159,7 @@
         if(![_udpSocket sendData:data toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
             NSLog(@"ChatVC send text failed");
         } else {
-            [_messageQueueManager addSendingMessage:_ipStr packetData:data];
+            [_messageQueueManager addSendingMessageIP:_ipStr packetData:data];
         }
     }
 }
