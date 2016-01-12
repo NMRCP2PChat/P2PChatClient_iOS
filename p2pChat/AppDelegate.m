@@ -193,8 +193,8 @@
                     float during;
                     [_buffArr[0] getBytes:&during range:NSMakeRange(0, sizeof(float))];
                     more = [[NSString alloc]initWithFormat:@"%0.2f", during];
-                    for (NSData *data in _buffArr) {
-                        [wholeData appendData:data];
+                    for (int i = 1; i < _buffArr.count; i++) {
+                        [wholeData appendData:_buffArr[i]];
                     }
                     
                     path = [path stringByAppendingPathComponent:[[Tool stringFromDate:date]stringByAppendingPathExtension:@"caf"]];

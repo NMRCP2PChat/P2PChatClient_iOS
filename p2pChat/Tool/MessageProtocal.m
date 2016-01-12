@@ -62,7 +62,7 @@ static unsigned char packetID = 0;
     [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 wholeLength:length length:infoData.length body:infoData]];
     
     for (int i = 0; i < piece; i++) {
-        [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 | (char)(i + 1) wholeLength:length length:PIECELENGTH body:[recordData subdataWithRange:NSMakeRange(i * PIECELENGTH, (i + 1) * PIECELENGTH)]]];
+        [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 | (char)(i + 1) wholeLength:length length:PIECELENGTH body:[recordData subdataWithRange:NSMakeRange(i * PIECELENGTH, PIECELENGTH)]]];
     }
     [arr addObject:[self archiveMessageWithType:MessageProtocalTypeRecord << 4 | (char)(piece + 1) wholeLength:length length:recordData.length - piece * PIECELENGTH body:[recordData subdataWithRange:NSMakeRange(piece * PIECELENGTH, length - piece * PIECELENGTH)]]];
     

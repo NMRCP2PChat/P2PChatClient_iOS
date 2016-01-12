@@ -38,7 +38,7 @@
 - (float)stopRecord {
     NSTimeInterval during = _recorder.currentTime;
     [_recorder stop];
-    [self startPlay];
+//    [self startPlay];
     return (float)during;
 }
 
