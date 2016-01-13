@@ -42,6 +42,8 @@
 		DA95D5A81C3A16E6001ED1A6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA95D5A61C3A16E6001ED1A6 /* LaunchScreen.storyboard */; };
 		DA95D5B31C3A16E6001ED1A6 /* p2pChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DA95D5B21C3A16E6001ED1A6 /* p2pChatTests.m */; };
 		DA95D5BE1C3A16E6001ED1A6 /* p2pChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = DA95D5BD1C3A16E6001ED1A6 /* p2pChatUITests.m */; };
+		DAA3FDAA1C4647E600034F44 /* P2PUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA3FDA91C4647E600034F44 /* P2PUdpSocket.m */; };
+		DAA3FDB01C465CFB00034F44 /* P2PTcpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA3FDAF1C465CFB00034F44 /* P2PTcpSocket.m */; };
 		DAA67E3E1C3FACD50037C105 /* MessageQueueManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA67E3D1C3FACD50037C105 /* MessageQueueManager.m */; };
 		DAD235021C424CEE003A93F9 /* MoreView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAD235011C424CEE003A93F9 /* MoreView.xib */; };
 		DAD235051C424D05003A93F9 /* MoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD235041C424D05003A93F9 /* MoreView.m */; };
@@ -128,6 +130,10 @@
 		DA95D5B91C3A16E6001ED1A6 /* p2pChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = p2pChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA95D5BD1C3A16E6001ED1A6 /* p2pChatUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = p2pChatUITests.m; sourceTree = "<group>"; };
 		DA95D5BF1C3A16E6001ED1A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DAA3FDA81C4647E600034F44 /* P2PUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = P2PUdpSocket.h; path = framework/P2PUdpSocket.h; sourceTree = "<group>"; };
+		DAA3FDA91C4647E600034F44 /* P2PUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = P2PUdpSocket.m; path = framework/P2PUdpSocket.m; sourceTree = "<group>"; };
+		DAA3FDAE1C465CFB00034F44 /* P2PTcpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = P2PTcpSocket.h; path = framework/P2PTcpSocket.h; sourceTree = "<group>"; };
+		DAA3FDAF1C465CFB00034F44 /* P2PTcpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = P2PTcpSocket.m; path = framework/P2PTcpSocket.m; sourceTree = "<group>"; };
 		DAA67E3C1C3FACD50037C105 /* MessageQueueManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageQueueManager.h; sourceTree = "<group>"; };
 		DAA67E3D1C3FACD50037C105 /* MessageQueueManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageQueueManager.m; sourceTree = "<group>"; };
 		DAD235011C424CEE003A93F9 /* MoreView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MoreView.xib; sourceTree = "<group>"; };
@@ -181,6 +187,10 @@
 		DA9046B91C3A51A8009E75B7 /* Tools */ = {
 			isa = PBXGroup;
 			children = (
+				DAA3FDA81C4647E600034F44 /* P2PUdpSocket.h */,
+				DAA3FDA91C4647E600034F44 /* P2PUdpSocket.m */,
+				DAA3FDAE1C465CFB00034F44 /* P2PTcpSocket.h */,
+				DAA3FDAF1C465CFB00034F44 /* P2PTcpSocket.m */,
 				DA9046AD1C3A51A1009E75B7 /* AudioCenter.h */,
 				DA9046AE1C3A51A1009E75B7 /* AudioCenter.m */,
 				DA9046AF1C3A51A1009E75B7 /* MessageProtocal.h */,
@@ -484,6 +494,7 @@
 				DA95D59A1C3A16E6001ED1A6 /* AppDelegate.m in Sources */,
 				DAD235091C425347003A93F9 /* RecordView.m in Sources */,
 				DA95D5A31C3A16E6001ED1A6 /* p2pChat.xcdatamodeld in Sources */,
+				DAA3FDAA1C4647E600034F44 /* P2PUdpSocket.m in Sources */,
 				DA258D2F1C3B6F2E00AED768 /* MessageCell.m in Sources */,
 				DA95D5971C3A16E6001ED1A6 /* main.m in Sources */,
 				DA9046A21C3A49AA009E75B7 /* Friend+CoreDataProperties.m in Sources */,
@@ -491,6 +502,7 @@
 				DA9046C71C3A6668009E75B7 /* RegisterViewController.m in Sources */,
 				DA9046A51C3A49AA009E75B7 /* Message.m in Sources */,
 				DAA67E3E1C3FACD50037C105 /* MessageQueueManager.m in Sources */,
+				DAA3FDB01C465CFB00034F44 /* P2PTcpSocket.m in Sources */,
 				DA9046B51C3A51A1009E75B7 /* AudioCenter.m in Sources */,
 				DA9046A41C3A49AA009E75B7 /* Message+CoreDataProperties.m in Sources */,
 				DA9046B81C3A51A1009E75B7 /* Tool.m in Sources */,

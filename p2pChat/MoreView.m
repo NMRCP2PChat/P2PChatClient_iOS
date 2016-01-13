@@ -10,7 +10,7 @@
 #import "Tool.h"
 #import "MessageProtocal.h"
 #import "DataManager.h"
-#import "AsyncUdpSocket.h"
+#import "P2PUdpSocket.h"
 #import "MessageQueueManager.h"
 
 @interface MoreView ()
@@ -21,9 +21,14 @@
 @property (strong, nonatomic) NSString *thumbnailImagePath;
 @property (strong, nonatomic) UIView *previewView;
 
+@property (strong, nonatomic) P2PUdpSocket *udpSocket;
+
 @end
 
-@implementation MoreView 
+@implementation MoreView
+- (void) awakeFromNib {
+    _udpSocket = [P2PUdpSocket shareInstance];
+}
 
 - (IBAction)pickPicture:(id)sender {
     if (_imagePickerVC == nil) {
@@ -77,13 +82,12 @@
     
     NSArray *arr = [[MessageProtocal shareInstance]archiveThumbnail:_thumbnailImagePath];
     for (NSData *data in arr) {
-        if (![_udpSocket sendData:data toHost:_ipStr port:1234 withTimeout:-1 tag:0]) {
+        if (![_udpSocket sendData:data toHost:_ipStr port:UdpPort withTimeout:-1 tag:0]) {
             NSLog(@"MoreView send pic failed");
         } else {
             [[MessageQueueManager shareInstance]addSendingMessageIP:_ipStr packetData:data];
         }
     }
-
 }
 
 - (void)initPreview {
@@ -106,7 +110,7 @@
     [_previewView addSubview:sendBtn];
 }
 
-#pragma mark -- image picker delegate
+#pragma mark - image picker delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(nonnull NSDictionary<NSString *,id> *)info {
     [self initPreview];
     CGSize size = [UIScreen mainScreen].bounds.size;
@@ -117,4 +121,5 @@
     [_previewView addSubview:imageView];
     [picker.view addSubview:_previewView];
 }
+
 @end

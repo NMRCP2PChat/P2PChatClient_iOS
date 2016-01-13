@@ -9,11 +9,15 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 #import <AVFoundation/AVFoundation.h>
-#import "AsyncUdpSocket.h"
+@class P2PUdpSocket;
+@class P2PTcpSocket;
 @class AudioCenter;
 @class MessageProtocal;
 @class DataManager;
 @class MessageQueueManager;
+
+#define UdpPort 1234
+#define TcpPort 2345
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -26,7 +30,8 @@
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 
-@property (readonly, strong, nonatomic) AsyncUdpSocket *udpSocket;
+@property (readonly, strong, nonatomic) P2PUdpSocket *udpSocket;
+@property (readonly, strong, nonatomic) P2PTcpSocket *tcpSocket;
 @property (readonly, strong, nonatomic) DataManager *dataManager;
 @property (readonly, strong, nonatomic) AudioCenter *audioCenter;
 @property (readonly, strong, nonatomic) MessageProtocal *messageProtocal;

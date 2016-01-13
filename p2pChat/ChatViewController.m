@@ -7,7 +7,7 @@
 //
 
 #import "ChatViewController.h"
-#import "AppDelegate.h"
+#import "P2PUdpSocket.h"
 #import "Friend.h"
 #import "MessageProtocal.h"
 #import "DataManager.h"
@@ -49,7 +49,7 @@
 @property (strong, nonatomic) NSFetchedResultsController *historyController;
 @property (strong, nonatomic) MyFetchedResultsControllerDelegate *historyControllerDelegate;
 
-@property (strong, nonatomic) AsyncUdpSocket *udpSocket;
+@property (strong, nonatomic) P2PUdpSocket *udpSocket;
 @property (strong, nonatomic) MessageQueueManager *messageQueueManager;
 
 @property (strong, nonatomic) NSString *myPhotoPath;
@@ -62,11 +62,11 @@
     [super viewDidLoad];
     
     // init socket
-    AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
-    _udpSocket = appDelegate.udpSocket;
+    _udpSocket = [P2PUdpSocket shareInstance];
+//    _ipStr = @"10.8.54.3";
     _ipStr = @"127.0.0.1";
     
-    _messageQueueManager = appDelegate.messageQueueManager;
+    _messageQueueManager = [MessageQueueManager shareInstance];
     
     //--------
     _userID = [NSNumber numberWithUnsignedShort:234];
@@ -106,7 +106,6 @@
     _moreView.frame = CGRectMake(0, _screenSize.height, _screenSize.width, VIEWHEIGHT);
     _moreView.ipStr = _ipStr;
     _moreView.userID = _userID;
-    _moreView.udpSocket = _udpSocket;
     [self.view addSubview:_moreView];
 }
 
@@ -120,7 +119,7 @@
     [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
 
-#pragma mark -- IB actions
+#pragma mark - IB actions
 - (IBAction)record:(id)sender {
     [_messageTF resignFirstResponder];
     if (_showMoreView) {
@@ -156,7 +155,7 @@
         [[DataManager shareManager]saveMessageWithUserID:_userID time:date body:message isOut:YES];
     
         NSData *data = [[MessageProtocal shareInstance] archiveText:message];
-        if(![_udpSocket sendData:data toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
+        if(![_udpSocket sendData:data toHost:_ipStr port:UdpPort withTimeout:-1 tag:1]) {
             NSLog(@"ChatVC send text failed");
         } else {
             [_messageQueueManager addSendingMessageIP:_ipStr packetData:data];
@@ -191,7 +190,7 @@
     }
 }
 
-#pragma mark --table view data source
+#pragma mark -table view data source
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     id<NSFetchedResultsSectionInfo> sectionInfo = _historyController.sections[section];
     return sectionInfo.numberOfObjects;
@@ -234,12 +233,12 @@
     return cell;
 }
 
-#pragma mark -- table view delegate
+#pragma mark - table view delegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 100;
 }
 
-#pragma mark --keyboard notification
+#pragma mark -keyboard notification
 - (void)keyboardShow:(NSNotification *)notification {
     _showMoreView = NO;
     _showRecordView = NO;
@@ -257,7 +256,7 @@
     }];
 }
 
-#pragma mark --text field delegate
+#pragma mark -text field delegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [self send:nil];
     

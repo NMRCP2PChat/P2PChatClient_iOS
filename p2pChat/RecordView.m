@@ -12,7 +12,7 @@
 #import "DataManager.h"
 #import "MessageProtocal.h"
 #import "MessageQueueManager.h"
-#import "AppDelegate.h"
+#import "P2PUdpSocket.h"
 
 @interface RecordView () {
     AudioCenter *_audioCenter;
@@ -30,12 +30,11 @@
 
 - (IBAction)stopRecord:(id)sender {
     CGFloat during = [[AudioCenter shareInstance] stopRecord];
-    AppDelegate *delegate = [UIApplication sharedApplication].delegate;
-    AsyncUdpSocket *udpSocket = delegate.udpSocket;
+    P2PUdpSocket *udpSocket = [P2PUdpSocket shareInstance];
     [[DataManager shareManager]saveRecordWithUserID:_userID time:[NSDate date] path:_audioCenter.path length:[NSString stringWithFormat:@"%0.2f", during] isOut:YES];
     NSArray *recordArr = [[MessageProtocal shareInstance]archiveRecord:_audioCenter.path during:[NSNumber numberWithFloat:during]];
     for (NSData *pieceData in recordArr) {
-        if (![udpSocket sendData:pieceData toHost:_ipStr port:1234 withTimeout:-1 tag:1]) {
+        if (![udpSocket sendData:pieceData toHost:_ipStr port:UdpPort withTimeout:-1 tag:1]) {
             NSLog(@"RecordView send record failed");
         } else {
             [[MessageQueueManager shareInstance] addSendingMessageIP:_ipStr packetData:pieceData];

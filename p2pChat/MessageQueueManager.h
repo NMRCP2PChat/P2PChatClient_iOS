@@ -7,13 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-@class AsyncUdpSocket;
+@class P2PUdpSocket;
 
 @interface MessageQueueManager : NSObject
 
 @property (strong, nonatomic, readonly) NSMutableDictionary *sendingQueue;
 
-- (id)initWithSocket:(AsyncUdpSocket *)udpSocket timer:(NSTimer *)timer;
+- (id)initWithSocket:(P2PUdpSocket *)udpSocket timer:(NSTimer *)timer;
 + (instancetype)shareInstance;
 
 - (void)addSendingMessageIP:(NSString *)ipStr packetData:(NSData *)data;

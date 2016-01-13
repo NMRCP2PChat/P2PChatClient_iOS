@@ -9,18 +9,18 @@
 
 #import "MessageQueueManager.h"
 #import "MessageProtocal.h"
-#import "AppDelegate.h"
+#import "P2PUdpSocket.h"
 
 @interface MessageQueueManager ()
 
-@property (strong, nonatomic) AsyncUdpSocket *udpSocket;
+@property (strong, nonatomic) P2PUdpSocket *udpSocket;
 @property (strong, nonatomic) NSTimer *timer;
 
 @end
 
 @implementation MessageQueueManager
 
-- (id)initWithSocket:(AsyncUdpSocket *)udpSocket timer:(NSTimer *)timer {
+- (id)initWithSocket:(P2PUdpSocket *)udpSocket timer:(NSTimer *)timer {
     self = [super init];
     _sendingQueue = [[NSMutableDictionary alloc]init];
     _udpSocket = udpSocket;
@@ -43,15 +43,18 @@
 
 - (void)messageSended:(unsigned int)packetID {
     [_sendingQueue removeObjectForKey:[NSNumber numberWithChar:packetID]];
+    if (_sendingQueue.allKeys.count == 0) {
+        [_timer setFireDate:[NSDate distantFuture]];
+    }
 //    NSLog(@"sending queue number: %d", _sendingQueue.allKeys.count);
 }
 
 - (void)sendAgain {
-//    NSLog(@"MessageQueueManager send again");
+    NSLog(@"MessageQueueManager send again");
     NSArray *keys = _sendingQueue.allKeys;
     for (NSNumber *key in keys) {
         NSDictionary *dic = _sendingQueue[key];
-        [_udpSocket sendData:dic[@"data"] toHost:dic[@"ipStr"] port:1234 withTimeout:-1 tag:0];
+        [_udpSocket sendData:dic[@"data"] toHost:dic[@"ipStr"] port:UdpPort withTimeout:-1 tag:0];
     }
 }
 
