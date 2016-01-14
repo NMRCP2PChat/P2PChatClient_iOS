@@ -11,6 +11,7 @@
 #import "DataManager.h"
 #import "Tool.h"
 #import "MessageQueueManager.h"
+#import "P2PTcpSocket.h"
 
 @interface P2PUdpSocket ()
 
@@ -60,7 +61,7 @@
             withTag:(long)tag
            fromHost:(NSString *)host
                port:(UInt16)port {
-    //    NSLog(@"%@", host);
+        NSLog(@"%@", host);
 
     static int currentPos = 0;
     NSMutableData *wholeData = [[NSMutableData alloc]init];
@@ -107,15 +108,24 @@
         case MessageProtocalTypePicture:
             _buffArr[pieceNum] = bodyData;
             if (_buffArr.count == wholeLength / PIECELENGTH + 2) {
+                NSLog(@"1");
+                P2PTcpSocket *tcpSocket = [P2PTcpSocket shareInstance];
+                NSError *err = nil;
+                if (![tcpSocket acceptOnPort:TcpPort error:&err]) {
+                    NSLog(@"UdpSocket tcp socket listen failed: %@", err);
+                }
+                NSLog(@"2");
                 int picID;
                 [_buffArr[0] getBytes:&picID length:sizeof(char)];
                 picID = userId << 16 | picID;
                 for (int i = 1; i < _buffArr.count; i++) {
                     [wholeData appendData:_buffArr[i]];
                 }
+                NSLog(@"3");
                 NSString *path = [Tool getFileName:@"thumbnail" extension:@"png"];
                 [wholeData writeToFile:path atomically:YES];
                 [_dataManager savePhotoWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date path:nil thumbnail:path isOut:NO];
+                NSLog(@"4");
                 [_buffArr removeObjectsAtIndexes:[[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(0, _buffArr.count)]];
                 _uncomparedPic[[NSNumber numberWithInt:picID]] = path;
             }

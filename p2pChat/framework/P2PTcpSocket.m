@@ -8,11 +8,19 @@
 
 #import "P2PTcpSocket.h"
 #import "AppDelegate.h"
+#import "DataManager.h"
+
+@interface P2PTcpSocket ()
+
+@property (strong, nonatomic) NSNumber *userID;
+
+@end
 
 @implementation P2PTcpSocket
 
 - (id) init {
     self = [super initWithDelegate:self];
+    _userID = [NSNumber numberWithUnsignedShort:234];
     
     return self;
 }
@@ -36,6 +44,7 @@
 
 - (void)onSocket:(AsyncSocket *)sock didAcceptNewSocket:(AsyncSocket *)newSocket {
     NSLog(@"didAcceptNewSocket");
+    [newSocket readDataWithTimeout:-1 tag:0];
 }
 
 - (NSRunLoop *)onSocket:(AsyncSocket *)sock wantsRunLoopForNewSocket:(AsyncSocket *)newSocket {
@@ -54,6 +63,8 @@
 
 - (void)onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
     NSLog(@"did read data");
+    NSString *body = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+    [[DataManager shareManager]saveMessageWithUserID:_userID time:[NSDate date] body:body isOut:NO];
 }
 
 - (void)onSocket:(AsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {

@@ -37,16 +37,6 @@
     _udpSocket = [[P2PUdpSocket alloc]init];
     _tcpSocket = [[P2PTcpSocket alloc]init];
     
-    NSError *err = nil;
-//    if (![_tcpSocket connectToHost:@"10.8.54.3" onPort:TcpPort error:&err]) {
-//        NSLog(@"connect failed: %@", err);
-//    }
-//    NSData *data = [_messageProtocal archiveText:@"hello tcp"];
-//    [_tcpSocket writeData:data withTimeout:-1 tag:0];
-    if (![_tcpSocket acceptOnPort:TcpPort error:&err]) {
-        NSLog(@"accept failed: %@", err);
-    }
-    
     if ([[NSUserDefaults standardUserDefaults]stringForKey:@"name"] == nil) {
         [[NSUserDefaults standardUserDefaults]setObject:@"xiaoming" forKey:@"name"];
         [[NSUserDefaults standardUserDefaults]setObject:[NSNumber numberWithUnsignedShort:121] forKey:@"id"];
@@ -118,7 +108,6 @@
     return _persistentStoreCoordinator;
 }
 
-
 - (NSManagedObjectContext *)managedObjectContext {
     // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.)
     if (_managedObjectContext != nil) {
@@ -148,4 +137,5 @@
         }
     }
 }
+
 @end

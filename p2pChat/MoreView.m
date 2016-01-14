@@ -11,6 +11,7 @@
 #import "MessageProtocal.h"
 #import "DataManager.h"
 #import "P2PUdpSocket.h"
+#import "P2PTcpSocket.h"
 #import "MessageQueueManager.h"
 
 @interface MoreView ()
@@ -22,12 +23,14 @@
 @property (strong, nonatomic) UIView *previewView;
 
 @property (strong, nonatomic) P2PUdpSocket *udpSocket;
+@property (strong, nonatomic) P2PTcpSocket *tcpSocket;
 
 @end
 
 @implementation MoreView
 - (void) awakeFromNib {
     _udpSocket = [P2PUdpSocket shareInstance];
+    _tcpSocket = [P2PTcpSocket shareInstance];
 }
 
 - (IBAction)pickPicture:(id)sender {
@@ -88,6 +91,12 @@
             [[MessageQueueManager shareInstance]addSendingMessageIP:_ipStr packetData:data];
         }
     }
+    NSError *err = nil;
+    if ([_tcpSocket connectToHost:_ipStr onPort:TcpPort error:&err]) {
+        NSLog(@"MoreView connect host failed: %@", err);
+    }
+    NSData *originalImageData = [NSData dataWithContentsOfFile:_originalImagePath];
+    [_tcpSocket writeData:originalImageData withTimeout:-1 tag:0];
 }
 
 - (void)initPreview {
