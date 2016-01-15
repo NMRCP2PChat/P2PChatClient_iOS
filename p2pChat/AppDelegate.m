@@ -16,7 +16,7 @@
 #import "P2PTcpSocket.h"
 #import "AsyncSocket.h"
 
-@interface AppDelegate () <AsyncUdpSocketDelegate, AsyncSocketDelegate>
+@interface AppDelegate ()
 
 @property (strong, nonatomic) NSTimer *scanMessageQueueTimer;
 
@@ -31,11 +31,14 @@
     _dataManager = [[DataManager alloc]init];
     _dataManager.context = _managedObjectContext;
     
+    _tcpSocket = [[P2PTcpSocket alloc]init];
+    _udpSocket = [[P2PUdpSocket alloc]init];
+    [_udpSocket receiveWithTimeout:-1 tag:0];
+    
     _scanMessageQueueTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(scanMessageQueue) userInfo:nil repeats:YES];
     [_scanMessageQueueTimer setFireDate:[NSDate distantFuture]];
     _messageQueueManager = [[MessageQueueManager alloc]initWithSocket:_udpSocket timer:_scanMessageQueueTimer];
-    _udpSocket = [[P2PUdpSocket alloc]init];
-    _tcpSocket = [[P2PTcpSocket alloc]init];
+    [_udpSocket setMessageQueueManager:_messageQueueManager];
     
     if ([[NSUserDefaults standardUserDefaults]stringForKey:@"name"] == nil) {
         [[NSUserDefaults standardUserDefaults]setObject:@"xiaoming" forKey:@"name"];

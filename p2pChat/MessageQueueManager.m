@@ -46,7 +46,7 @@
     if (_sendingQueue.allKeys.count == 0) {
         [_timer setFireDate:[NSDate distantFuture]];
     }
-//    NSLog(@"sending queue number: %d", _sendingQueue.allKeys.count);
+    NSLog(@"sending queue number: %d", _sendingQueue.allKeys.count);
 }
 
 - (void)sendAgain {

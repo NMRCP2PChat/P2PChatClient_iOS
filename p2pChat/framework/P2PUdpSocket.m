@@ -19,9 +19,11 @@
 @property (strong, nonatomic) DataManager *dataManager;
 @property (readonly, strong, nonatomic) MessageQueueManager *messageQueueManager;
 
-@property (strong, nonatomic) NSMutableArray *buffArr;
+@property (strong, nonatomic) NSMutableDictionary<NSNumber *, NSData *> *buff;
 @property (strong, nonatomic) NSMutableArray *recentMessageQueue;
 @property (strong, nonatomic) NSMutableDictionary<NSNumber *, NSString *> *uncomparedPic;
+
+@property (strong, nonatomic) P2PTcpSocket *tcpSocket;
 
 @end
 
@@ -33,14 +35,19 @@
     if (![self bindToPort:UdpPort error:&err]) {
         NSLog(@"p2p udp socket bind port failed: %@", err);
     }
-    [self receiveWithTimeout:-1 tag:0];
     _messageProtocal = [MessageProtocal shareInstance];
     _dataManager = [DataManager shareManager];
-    _buffArr = [[NSMutableArray alloc]initWithCapacity:15];
+    _buff = [[NSMutableDictionary alloc]initWithCapacity:15];
     _recentMessageQueue = [[NSMutableArray alloc]initWithCapacity:50];
     _uncomparedPic = [[NSMutableDictionary alloc]init];
     _messageQueueManager = [MessageQueueManager shareInstance];
+    _tcpSocket = [P2PTcpSocket shareInstance];
+    
     return self;
+}
+
+- (void)setMessageQueueManager:(MessageQueueManager *)messageQueueManager {
+    _messageQueueManager = messageQueueManager;
 }
 
 + (instancetype)shareInstance {
@@ -82,7 +89,7 @@
         }
         [_recentMessageQueue insertObject:[NSNumber numberWithInt:messageID] atIndex:currentPos++ % 20];
     }
-    unsigned int wholeLength = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getWholeLength:data];
+    unsigned int wholeLength = type == MessageProtocalTypeACK ? [_messageProtocal getACKID:data] : [_messageProtocal getWholeLength:data];
     int pieceNum = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getPieceNum:data];
     NSData *bodyData = type == MessageProtocalTypeACK ? 0 : [_messageProtocal getBodyData:data];
     
@@ -91,48 +98,49 @@
             [_dataManager saveMessageWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date body:[[NSString alloc]initWithData:bodyData encoding:NSUTF8StringEncoding] isOut:NO];
             break;
         case MessageProtocalTypeRecord:
-            _buffArr[pieceNum] = bodyData;
-            if ([_buffArr count] == wholeLength / PIECELENGTH + 2) {
+            _buff[[NSNumber numberWithInt:pieceNum]] = bodyData;
+            if (_buff.allKeys.count == wholeLength / PIECELENGTH + 2) {
                 float during;
-                [_buffArr[0] getBytes:&during range:NSMakeRange(0, sizeof(float))];
+                [_buff[[NSNumber numberWithInt:0]] getBytes:&during range:NSMakeRange(0, sizeof(float))];
                 more = [[NSString alloc]initWithFormat:@"%0.2f", during];
-                for (int i = 1; i < _buffArr.count; i++) {
-                    [wholeData appendData:_buffArr[i]];
+                for (int i = 1; i < _buff.allKeys.count; i++) {
+                    [wholeData appendData:_buff[[NSNumber numberWithInt:i]]];
                 }
                 NSString *path = [Tool getFileName:@"receive" extension:@"caf"];
                 [wholeData writeToFile:path atomically:YES];
                 [_dataManager saveRecordWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date path:path length:more isOut:NO];
-                [_buffArr removeObjectsAtIndexes:[[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(0, _buffArr.count)]];
+                [_buff removeAllObjects];
             }
             break;
         case MessageProtocalTypePicture:
-            _buffArr[pieceNum] = bodyData;
-            if (_buffArr.count == wholeLength / PIECELENGTH + 2) {
-                NSLog(@"1");
-                P2PTcpSocket *tcpSocket = [P2PTcpSocket shareInstance];
+            if (!_tcpSocket.isListen) {
                 NSError *err = nil;
-                if (![tcpSocket acceptOnPort:TcpPort error:&err]) {
+                [_tcpSocket disconnect];
+                if (![_tcpSocket acceptOnPort:TcpPort error:&err]) {
                     NSLog(@"UdpSocket tcp socket listen failed: %@", err);
                 }
-                NSLog(@"2");
+                _tcpSocket.isListen = YES;
+            }
+            _buff[[NSNumber numberWithInt:pieceNum]] = bodyData;
+            if (_buff.allKeys.count == wholeLength / PIECELENGTH + 2) {
                 int picID;
-                [_buffArr[0] getBytes:&picID length:sizeof(char)];
+                [_buff[[NSNumber numberWithInt:0]] getBytes:&picID length:sizeof(char)];
                 picID = userId << 16 | picID;
-                for (int i = 1; i < _buffArr.count; i++) {
-                    [wholeData appendData:_buffArr[i]];
+                for (int i = 1; i < _buff.allKeys.count; i++) {
+                    [wholeData appendData:_buff[[NSNumber numberWithInt:i]]];
                 }
-                NSLog(@"3");
+                
                 NSString *path = [Tool getFileName:@"thumbnail" extension:@"png"];
                 [wholeData writeToFile:path atomically:YES];
                 [_dataManager savePhotoWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date path:nil thumbnail:path isOut:NO];
-                NSLog(@"4");
-                [_buffArr removeObjectsAtIndexes:[[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(0, _buffArr.count)]];
+                [_buff removeAllObjects];
                 _uncomparedPic[[NSNumber numberWithInt:picID]] = path;
             }
             break;
         case MessageProtocalTypeACK:
-//            NSLog(@"received ack!");
-            [_messageQueueManager messageSended:[_messageProtocal getACKID:data]];
+            NSLog(@"received ack!");
+            [_messageQueueManager messageSended:wholeLength];
+            [[NSNotificationCenter defaultCenter]postNotificationName:P2PUdpSocketReceiveACKNotification object:[NSNumber numberWithUnsignedInt:wholeLength]];
             break;
         default: break;
             
@@ -140,4 +148,9 @@
     [sock receiveWithTimeout:-1 tag:0];
     return YES;
 }
+
+- (void)onUdpSocket:(AsyncUdpSocket *)sock didNotReceiveDataWithTag:(long)tag dueToError:(NSError *)error {
+    NSLog(@"didNotReceiveDataWithTag: %@", error);
+}
+
 @end

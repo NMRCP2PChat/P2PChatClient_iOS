@@ -21,6 +21,7 @@
 - (id) init {
     self = [super initWithDelegate:self];
     _userID = [NSNumber numberWithUnsignedShort:234];
+    _isListen = NO;
     
     return self;
 }
@@ -36,15 +37,17 @@
 #pragma mark - delegate
 - (void)onSocket:(AsyncSocket *)sock willDisconnectWithError:(NSError *)err {
     NSLog(@"willDisconnectWithError: %@", err);
+    _isListen = NO;
 }
 
 - (void)onSocketDidDisconnect:(AsyncSocket *)sock {
     NSLog(@"SocketDidDisconnect");
+    _isListen = NO;
 }
 
 - (void)onSocket:(AsyncSocket *)sock didAcceptNewSocket:(AsyncSocket *)newSocket {
     NSLog(@"didAcceptNewSocket");
-    [newSocket readDataWithTimeout:-1 tag:0];
+    [newSocket readDataWithTimeout:60 tag:0];
 }
 
 - (NSRunLoop *)onSocket:(AsyncSocket *)sock wantsRunLoopForNewSocket:(AsyncSocket *)newSocket {
@@ -62,13 +65,11 @@
 }
 
 - (void)onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
-    NSLog(@"did read data");
-    NSString *body = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-    [[DataManager shareManager]saveMessageWithUserID:_userID time:[NSDate date] body:body isOut:NO];
+    NSLog(@"did read data, length: %lu", (unsigned long)data.length);
 }
 
 - (void)onSocket:(AsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
-    NSLog(@"didReadPartialDataOfLength");
+    NSLog(@"didReadPartialDataOfLength, %lu", (unsigned long)partialLength);
 }
 
 - (void)onSocket:(AsyncSocket *)sock didWriteDataWithTag:(long)tag {
@@ -76,7 +77,7 @@
 }
 
 - (void)onSocket:(AsyncSocket *)sock didWritePartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
-    NSLog(@"didWritePartialDataOfLength");
+    NSLog(@"didWritePartialDataOfLength: %lu", (unsigned long)partialLength);
 }
 
 @end

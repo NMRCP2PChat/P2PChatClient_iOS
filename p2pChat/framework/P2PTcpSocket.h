@@ -12,4 +12,6 @@
 
 + (instancetype)shareInstance;
 
+@property (assign, nonatomic) BOOL isListen;
+
 @end

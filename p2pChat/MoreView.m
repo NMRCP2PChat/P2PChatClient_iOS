@@ -14,7 +14,9 @@
 #import "P2PTcpSocket.h"
 #import "MessageQueueManager.h"
 
-@interface MoreView ()
+@interface MoreView () {
+    int lastPacketID;
+}
 
 @property (strong, nonatomic) UIImagePickerController *imagePickerVC;
 @property (strong, nonatomic) UIImage *image;
@@ -25,12 +27,17 @@
 @property (strong, nonatomic) P2PUdpSocket *udpSocket;
 @property (strong, nonatomic) P2PTcpSocket *tcpSocket;
 
+@property (strong, nonatomic) dispatch_queue_t originalQueue;
+
 @end
 
 @implementation MoreView
 - (void) awakeFromNib {
     _udpSocket = [P2PUdpSocket shareInstance];
     _tcpSocket = [P2PTcpSocket shareInstance];
+    _originalQueue = dispatch_queue_create("original picture queue", DISPATCH_QUEUE_SERIAL);
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(sendOriginalImage:) name:P2PUdpSocketReceiveACKNotification object:nil];
 }
 
 - (IBAction)pickPicture:(id)sender {
@@ -58,8 +65,9 @@
 
 - (void)sendPic {
     _originalImagePath = [Tool getFileName:@"original" extension:@"png"];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(_originalQueue, ^{
         [UIImagePNGRepresentation(_image) writeToFile:_originalImagePath atomically:YES];
+        NSLog(@"save image success: %@", _originalImagePath);
     });
     [_previewView removeFromSuperview];
     [_imagePickerVC dismissViewControllerAnimated:YES completion:nil];
@@ -84,6 +92,7 @@
     [[DataManager shareManager]savePhotoWithUserID:_userID time:[NSDate date] path:_originalImagePath thumbnail:_thumbnailImagePath isOut:YES];
     
     NSArray *arr = [[MessageProtocal shareInstance]archiveThumbnail:_thumbnailImagePath];
+    lastPacketID = [[MessageProtocal shareInstance]getPacketID:arr.lastObject];
     for (NSData *data in arr) {
         if (![_udpSocket sendData:data toHost:_ipStr port:UdpPort withTimeout:-1 tag:0]) {
             NSLog(@"MoreView send pic failed");
@@ -91,12 +100,24 @@
             [[MessageQueueManager shareInstance]addSendingMessageIP:_ipStr packetData:data];
         }
     }
-    NSError *err = nil;
-    if ([_tcpSocket connectToHost:_ipStr onPort:TcpPort error:&err]) {
-        NSLog(@"MoreView connect host failed: %@", err);
+}
+
+- (void)sendOriginalImage:(NSNotification *)notification {
+    NSNumber *num = notification.object;
+    if (num.intValue == lastPacketID) {
+        dispatch_async(_originalQueue, ^{            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSError *err = nil;
+                if (![_tcpSocket connectToHost:_ipStr onPort:TcpPort error:&err]) {
+                    NSLog(@"MoreView connect host failed: %@", err);
+                }
+                NSData *originalImageData = [NSData dataWithContentsOfFile:_originalImagePath];
+                NSLog(@"image data length: %lu", (unsigned long)originalImageData.length);
+                [_tcpSocket writeData:originalImageData withTimeout:60 tag:0];
+            });
+            
+        });
     }
-    NSData *originalImageData = [NSData dataWithContentsOfFile:_originalImagePath];
-    [_tcpSocket writeData:originalImageData withTimeout:-1 tag:0];
 }
 
 - (void)initPreview {
