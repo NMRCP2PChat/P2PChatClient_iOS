@@ -27,15 +27,12 @@
 @property (strong, nonatomic) P2PUdpSocket *udpSocket;
 @property (strong, nonatomic) P2PTcpSocket *tcpSocket;
 
-@property (strong, nonatomic) dispatch_queue_t originalQueue;
-
 @end
 
 @implementation MoreView
 - (void) awakeFromNib {
     _udpSocket = [P2PUdpSocket shareInstance];
     _tcpSocket = [P2PTcpSocket shareInstance];
-    _originalQueue = dispatch_queue_create("original picture queue", DISPATCH_QUEUE_SERIAL);
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(sendOriginalImage:) name:P2PUdpSocketReceiveACKNotification object:nil];
 }
@@ -64,11 +61,6 @@
 }
 
 - (void)sendPic {
-    _originalImagePath = [Tool getFileName:@"original" extension:@"png"];
-    dispatch_async(_originalQueue, ^{
-        [UIImagePNGRepresentation(_image) writeToFile:_originalImagePath atomically:YES];
-        NSLog(@"save image success: %@", _originalImagePath);
-    });
     [_previewView removeFromSuperview];
     [_imagePickerVC dismissViewControllerAnimated:YES completion:nil];
     [self makeThumbnail];
@@ -105,18 +97,13 @@
 - (void)sendOriginalImage:(NSNotification *)notification {
     NSNumber *num = notification.object;
     if (num.intValue == lastPacketID) {
-        dispatch_async(_originalQueue, ^{            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSError *err = nil;
-                if (![_tcpSocket connectToHost:_ipStr onPort:TcpPort error:&err]) {
-                    NSLog(@"MoreView connect host failed: %@", err);
-                }
-                NSData *originalImageData = [NSData dataWithContentsOfFile:_originalImagePath];
-                NSLog(@"image data length: %lu", (unsigned long)originalImageData.length);
-                [_tcpSocket writeData:originalImageData withTimeout:60 tag:0];
-            });
-            
-        });
+        NSError *err = nil;
+        if (![_tcpSocket connectToHost:_ipStr onPort:TcpPort error:&err]) {
+            NSLog(@"MoreView connect host failed: %@", err);
+        }
+        NSData *originalImageData = [NSData dataWithContentsOfFile:_originalImagePath];
+        NSLog(@"image data length: %lu", (unsigned long)originalImageData.length);
+        [_tcpSocket writeData:originalImageData withTimeout:60 tag:0];
     }
 }
 
@@ -145,6 +132,8 @@
     [self initPreview];
     CGSize size = [UIScreen mainScreen].bounds.size;
     _image = info[UIImagePickerControllerOriginalImage];
+    NSURL *url = info[UIImagePickerControllerReferenceURL];
+    _originalImagePath = [url absoluteString];
     CGFloat scale = MIN(size.width / _image.size.width, size.height / _image.size.height);
     UIImageView *imageView = [[UIImageView alloc]initWithImage:_image];
     imageView.frame = CGRectMake((size.width - _image.size.width * scale) / 2, (size.height - _image.size.height * scale) / 2, _image.size.width * scale, _image.size.height * scale);

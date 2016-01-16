@@ -13,6 +13,7 @@
 @interface P2PTcpSocket ()
 
 @property (strong, nonatomic) NSNumber *userID;
+@property (strong, nonatomic) NSMutableData *buff;
 
 @end
 
@@ -22,6 +23,7 @@
     self = [super initWithDelegate:self];
     _userID = [NSNumber numberWithUnsignedShort:234];
     _isListen = NO;
+    _buff = [[NSMutableData alloc]init];
     
     return self;
 }
@@ -41,7 +43,7 @@
 }
 
 - (void)onSocketDidDisconnect:(AsyncSocket *)sock {
-    NSLog(@"SocketDidDisconnect");
+    NSLog(@"SocketDidDisconnect, buff length: %lu", (unsigned long)_buff.length);
     _isListen = NO;
 }
 
@@ -66,6 +68,8 @@
 
 - (void)onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
     NSLog(@"did read data, length: %lu", (unsigned long)data.length);
+    [_buff appendData:data];
+    [sock readDataWithTimeout:60 tag:0];
 }
 
 - (void)onSocket:(AsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
@@ -74,6 +78,7 @@
 
 - (void)onSocket:(AsyncSocket *)sock didWriteDataWithTag:(long)tag {
     NSLog(@"didWriteDataWithTag");
+    [sock disconnect];
 }
 
 - (void)onSocket:(AsyncSocket *)sock didWritePartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
