@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 #import <AVFoundation/AVFoundation.h>
+@class PhotoLibraryCenter;
 @class P2PUdpSocket;
 @class P2PTcpSocket;
 @class AudioCenter;
@@ -34,6 +35,7 @@
 @property (readonly, strong, nonatomic) P2PTcpSocket *tcpSocket;
 @property (readonly, strong, nonatomic) DataManager *dataManager;
 @property (readonly, strong, nonatomic) AudioCenter *audioCenter;
+@property (readonly, strong, nonatomic) PhotoLibraryCenter *photoLibraryCenter;
 @property (readonly, strong, nonatomic) MessageProtocal *messageProtocal;
 @property (readonly, strong, nonatomic) MessageQueueManager *messageQueueManager;
 

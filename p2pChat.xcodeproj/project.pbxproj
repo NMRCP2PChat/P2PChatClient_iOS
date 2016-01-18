@@ -45,6 +45,7 @@
 		DAA3FDAA1C4647E600034F44 /* P2PUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA3FDA91C4647E600034F44 /* P2PUdpSocket.m */; };
 		DAA3FDB01C465CFB00034F44 /* P2PTcpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA3FDAF1C465CFB00034F44 /* P2PTcpSocket.m */; };
 		DAA67E3E1C3FACD50037C105 /* MessageQueueManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA67E3D1C3FACD50037C105 /* MessageQueueManager.m */; };
+		DAAC6D781C4CD2A2009C0859 /* PhotoLibraryCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = DAAC6D771C4CD2A2009C0859 /* PhotoLibraryCenter.m */; };
 		DAD235021C424CEE003A93F9 /* MoreView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAD235011C424CEE003A93F9 /* MoreView.xib */; };
 		DAD235051C424D05003A93F9 /* MoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD235041C424D05003A93F9 /* MoreView.m */; };
 		DAD235091C425347003A93F9 /* RecordView.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD235081C425347003A93F9 /* RecordView.m */; };
@@ -136,6 +137,8 @@
 		DAA3FDAF1C465CFB00034F44 /* P2PTcpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = P2PTcpSocket.m; path = framework/P2PTcpSocket.m; sourceTree = "<group>"; };
 		DAA67E3C1C3FACD50037C105 /* MessageQueueManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageQueueManager.h; sourceTree = "<group>"; };
 		DAA67E3D1C3FACD50037C105 /* MessageQueueManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageQueueManager.m; sourceTree = "<group>"; };
+		DAAC6D761C4CD2A2009C0859 /* PhotoLibraryCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoLibraryCenter.h; path = Tool/PhotoLibraryCenter.h; sourceTree = "<group>"; };
+		DAAC6D771C4CD2A2009C0859 /* PhotoLibraryCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoLibraryCenter.m; path = Tool/PhotoLibraryCenter.m; sourceTree = "<group>"; };
 		DAD235011C424CEE003A93F9 /* MoreView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MoreView.xib; sourceTree = "<group>"; };
 		DAD235031C424D05003A93F9 /* MoreView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreView.h; sourceTree = "<group>"; };
 		DAD235041C424D05003A93F9 /* MoreView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreView.m; sourceTree = "<group>"; };
@@ -187,12 +190,8 @@
 		DA9046B91C3A51A8009E75B7 /* Tools */ = {
 			isa = PBXGroup;
 			children = (
-				DAA3FDA81C4647E600034F44 /* P2PUdpSocket.h */,
-				DAA3FDA91C4647E600034F44 /* P2PUdpSocket.m */,
-				DAA3FDAE1C465CFB00034F44 /* P2PTcpSocket.h */,
-				DAA3FDAF1C465CFB00034F44 /* P2PTcpSocket.m */,
-				DA9046AD1C3A51A1009E75B7 /* AudioCenter.h */,
-				DA9046AE1C3A51A1009E75B7 /* AudioCenter.m */,
+				DAAC6D791C4CD2B9009C0859 /* Network */,
+				DAAC6D7A1C4CD2C8009C0859 /* Media */,
 				DA9046AF1C3A51A1009E75B7 /* MessageProtocal.h */,
 				DA9046B01C3A51A1009E75B7 /* MessageProtocal.m */,
 				DA9046B11C3A51A1009E75B7 /* MyFetchedResultsControllerDelegate.h */,
@@ -314,6 +313,28 @@
 				DA9046A11C3A49AA009E75B7 /* LastMessage.m */,
 			);
 			name = DataStorage;
+			sourceTree = "<group>";
+		};
+		DAAC6D791C4CD2B9009C0859 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				DAA3FDA81C4647E600034F44 /* P2PUdpSocket.h */,
+				DAA3FDA91C4647E600034F44 /* P2PUdpSocket.m */,
+				DAA3FDAE1C465CFB00034F44 /* P2PTcpSocket.h */,
+				DAA3FDAF1C465CFB00034F44 /* P2PTcpSocket.m */,
+			);
+			name = Network;
+			sourceTree = "<group>";
+		};
+		DAAC6D7A1C4CD2C8009C0859 /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				DA9046AD1C3A51A1009E75B7 /* AudioCenter.h */,
+				DA9046AE1C3A51A1009E75B7 /* AudioCenter.m */,
+				DAAC6D761C4CD2A2009C0859 /* PhotoLibraryCenter.h */,
+				DAAC6D771C4CD2A2009C0859 /* PhotoLibraryCenter.m */,
+			);
+			name = Media;
 			sourceTree = "<group>";
 		};
 		DAD235061C424D0E003A93F9 /* MoreView */ = {
@@ -494,6 +515,7 @@
 				DA95D59A1C3A16E6001ED1A6 /* AppDelegate.m in Sources */,
 				DAD235091C425347003A93F9 /* RecordView.m in Sources */,
 				DA95D5A31C3A16E6001ED1A6 /* p2pChat.xcdatamodeld in Sources */,
+				DAAC6D781C4CD2A2009C0859 /* PhotoLibraryCenter.m in Sources */,
 				DAA3FDAA1C4647E600034F44 /* P2PUdpSocket.m in Sources */,
 				DA258D2F1C3B6F2E00AED768 /* MessageCell.m in Sources */,
 				DA95D5971C3A16E6001ED1A6 /* main.m in Sources */,

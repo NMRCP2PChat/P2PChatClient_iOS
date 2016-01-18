@@ -9,6 +9,7 @@
 #import "P2PTcpSocket.h"
 #import "AppDelegate.h"
 #import "DataManager.h"
+#import "PhotoLibraryCenter.h"
 
 @interface P2PTcpSocket ()
 
@@ -44,6 +45,8 @@
 
 - (void)onSocketDidDisconnect:(AsyncSocket *)sock {
     NSLog(@"SocketDidDisconnect, buff length: %lu", (unsigned long)_buff.length);
+    UIImage *image = [UIImage imageWithData:_buff];
+    [[PhotoLibraryCenter shareInstance]saveImage:image];
     _isListen = NO;
 }
 

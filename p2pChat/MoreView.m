@@ -13,6 +13,7 @@
 #import "P2PUdpSocket.h"
 #import "P2PTcpSocket.h"
 #import "MessageQueueManager.h"
+#import "PhotoLibraryCenter.h"
 
 @interface MoreView () {
     int lastPacketID;
@@ -101,7 +102,8 @@
         if (![_tcpSocket connectToHost:_ipStr onPort:TcpPort error:&err]) {
             NSLog(@"MoreView connect host failed: %@", err);
         }
-        NSData *originalImageData = [NSData dataWithContentsOfFile:_originalImagePath];
+        
+        NSData *originalImageData = UIImageJPEGRepresentation(_image, 5.0);
         NSLog(@"image data length: %lu", (unsigned long)originalImageData.length);
         [_tcpSocket writeData:originalImageData withTimeout:60 tag:0];
     }

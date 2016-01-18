@@ -63,7 +63,7 @@
     
     // init socket
     _udpSocket = [P2PUdpSocket shareInstance];
-    _ipStr = @"10.8.53.148";
+    _ipStr = @"10.8.53.156";
 //    _ipStr = @"127.0.0.1";
     
     _messageQueueManager = [MessageQueueManager shareInstance];
