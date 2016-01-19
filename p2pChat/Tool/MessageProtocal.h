@@ -28,7 +28,7 @@ typedef NS_ENUM (char, MessageProtocalType) {
 
 - (NSData *)archiveText:(NSString *)body;
 - (NSArray *)archiveRecord:(NSString *)path during:(NSNumber *)during;
-- (NSArray *)archiveThumbnail:(NSString *)path;
+- (NSArray *)archiveThumbnail:(NSString *)path picID:(char)picID;
 
 - (int)getPacketID:(NSData *)data;// 包id
 - (unsigned short)getUserID:(NSData *)data;

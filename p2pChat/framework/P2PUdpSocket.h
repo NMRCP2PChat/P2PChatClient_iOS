@@ -16,4 +16,6 @@
 + (instancetype)shareInstance;
 - (void)setMessageQueueManager:(MessageQueueManager *)messageQueueManager;
 
+- (NSString *)getAndRemoveThumbnailPath:(int)picID;
+
 @end

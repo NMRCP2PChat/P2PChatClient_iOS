@@ -12,7 +12,6 @@
 @implementation MessageProtocal
 
 static unsigned char packetID = 0;
-static unsigned char picID = 0;
 
 +(instancetype)shareInstance {
     AppDelegate *delegate = [UIApplication sharedApplication].delegate;
@@ -51,7 +50,7 @@ static unsigned char picID = 0;
 
 - (NSArray *)archiveRecord:(NSString *)path during:(NSNumber *)during{
     NSData *recordData = [NSData dataWithContentsOfFile:path];
-    long length = recordData.length;
+    int length = (int)recordData.length;
     int piece = length / PIECELENGTH;
     NSMutableArray *arr = [[NSMutableArray alloc]init];
     float time = [during floatValue];
@@ -67,13 +66,13 @@ static unsigned char picID = 0;
     return arr;
 }
 
-- (NSArray *)archiveThumbnail:(NSString *)path {
+- (NSArray *)archiveThumbnail:(NSString *)path picID:(char)picID {
     NSData *thumbnailData = [NSData dataWithContentsOfFile:path];
-    long length = thumbnailData.length;
+    int length = (int)thumbnailData.length;
     int piece = length / PIECELENGTH;
     NSMutableArray *arr = [[NSMutableArray alloc]init];
     NSMutableData *picIDData = [[NSMutableData alloc]initWithBytes:&picID length:sizeof(unsigned char)];
-    picID++;
+
     [arr addObject:[self archiveMessageWithType:MessageProtocalTypePicture << 4 wholeLength:length length:picIDData.length body:picIDData]];
     for (int i = 0; i < piece; i++) {
         [arr addObject:[self archiveMessageWithType:MessageProtocalTypePicture << 4 | (char)(i + 1) wholeLength:length length:PIECELENGTH body:[thumbnailData subdataWithRange:NSMakeRange(i * PIECELENGTH, PIECELENGTH)]]];

@@ -10,11 +10,15 @@
 #import "AppDelegate.h"
 #import "DataManager.h"
 #import "PhotoLibraryCenter.h"
+#import "P2PUdpSocket.h"
 
-@interface P2PTcpSocket ()
+@interface P2PTcpSocket () <PhotoLibraryCenterDelegate> {
+    int picID;
+}
 
 @property (strong, nonatomic) NSNumber *userID;
 @property (strong, nonatomic) NSMutableData *buff;
+@property (strong, nonatomic) PhotoLibraryCenter *photoCenter;
 
 @end
 
@@ -25,6 +29,8 @@
     _userID = [NSNumber numberWithUnsignedShort:234];
     _isListen = NO;
     _buff = [[NSMutableData alloc]init];
+    _photoCenter = [[PhotoLibraryCenter alloc]init];
+    _photoCenter.delegate = self;
     
     return self;
 }
@@ -44,15 +50,18 @@
 }
 
 - (void)onSocketDidDisconnect:(AsyncSocket *)sock {
-    NSLog(@"SocketDidDisconnect, buff length: %lu", (unsigned long)_buff.length);
-    UIImage *image = [UIImage imageWithData:_buff];
-    [[PhotoLibraryCenter shareInstance]saveImage:image];
+    if (_buff.length != 0) {
+        NSLog(@"SocketDidDisconnect, buff length: %lu", (unsigned long)_buff.length);
+        UIImage *image = [UIImage imageWithData:_buff];
+        [_photoCenter saveImage:image];
+    }    
+    
     _isListen = NO;
 }
 
 - (void)onSocket:(AsyncSocket *)sock didAcceptNewSocket:(AsyncSocket *)newSocket {
     NSLog(@"didAcceptNewSocket");
-    [newSocket readDataWithTimeout:60 tag:0];
+    [newSocket readDataWithTimeout:60 tag:1];
 }
 
 - (NSRunLoop *)onSocket:(AsyncSocket *)sock wantsRunLoopForNewSocket:(AsyncSocket *)newSocket {
@@ -70,8 +79,16 @@
 }
 
 - (void)onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
-    NSLog(@"did read data, length: %lu", (unsigned long)data.length);
-    [_buff appendData:data];
+    NSLog(@"did read data, length: %lu, tag: %ld", (unsigned long)data.length, tag);
+    switch (tag) {
+        case 0:
+            [_buff appendData:data];
+            break;
+        case 1:
+            [data getBytes:&picID length:sizeof(int)];
+        default:
+            break;
+    }
     [sock readDataWithTimeout:60 tag:0];
 }
 
@@ -80,12 +97,19 @@
 }
 
 - (void)onSocket:(AsyncSocket *)sock didWriteDataWithTag:(long)tag {
-    NSLog(@"didWriteDataWithTag");
-    [sock disconnect];
+    NSLog(@"did Write Data With Tag: %ld", tag);
+    if (tag == 0) {
+        [sock disconnect];
+    }
 }
 
 - (void)onSocket:(AsyncSocket *)sock didWritePartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
     NSLog(@"didWritePartialDataOfLength: %lu", (unsigned long)partialLength);
 }
 
+#pragma mark - photo library center delegate
+- (void)photoLibraryCenterSaveImageWithLocalIdentifier:(NSString *)localIdentifier {
+    NSString *thumbnailPath = [[P2PUdpSocket shareInstance]getAndRemoveThumbnailPath:picID];
+    [[DataManager shareManager]savePhotoWithUserID:[NSNumber numberWithUnsignedShort:picID >> 16] time:[NSDate date] path:localIdentifier thumbnail:thumbnailPath isOut:NO];
+}
 @end

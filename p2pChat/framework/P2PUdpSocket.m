@@ -57,6 +57,12 @@
     return udpSocket;
 }
 
+- (NSString *)getAndRemoveThumbnailPath:(int)picID {
+    NSString *thumbnailPath = _uncomparedPic[[NSNumber numberWithInt:picID]];
+    [_uncomparedPic removeObjectForKey:[NSNumber numberWithInt:picID]];
+    return thumbnailPath;
+}
+
 #pragma mark - delegate
 
 - (void)onUdpSocket:(AsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error {

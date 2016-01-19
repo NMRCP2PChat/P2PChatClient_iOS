@@ -40,25 +40,56 @@
     return self;
 }
 
-+ (instancetype)shareInstance {
-    AppDelegate *delegate = [UIApplication sharedApplication].delegate;
-    return delegate.photoLibraryCenter;
-}
-
 - (void)saveImage:(UIImage *)image {
     [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
         PHAssetChangeRequest *createAssetRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
         PHAssetCollectionChangeRequest *albumChangeRequest = [PHAssetCollectionChangeRequest changeRequestForAssetCollection:_collection];
         PHObjectPlaceholder *assetPlaceholder = [createAssetRequest placeholderForCreatedAsset];
+        if ([_delegate respondsToSelector:@selector(photoLibraryCenterSaveImageWithLocalIdentifier:)]) {
+            [_delegate photoLibraryCenterSaveImageWithLocalIdentifier:assetPlaceholder.localIdentifier];
+        }
         [albumChangeRequest addAssets:@[assetPlaceholder]];
-        
     } completionHandler:^(BOOL success, NSError *error) {
         NSLog(@"Finished adding asset. %@", (success ? @"Success" : error));
     }];
 }
 
-//- (UIImage *)getImageWithPath:(NSString *)path {
-//    PHImageManager *manager = [PHImageManager defaultManager];
-//}
+- (UIImage *)makeThumbnail:(UIImage *)originalImage {
+    UIImage *thumbnail = nil;
+    CGFloat scale = MIN(150 / originalImage.size.width, 150 / originalImage.size.height);
+    CGSize smallSize = CGSizeMake(originalImage.size.width * scale, originalImage.size.height * scale);//缩略图大小
+    UIGraphicsBeginImageContextWithOptions(smallSize, NO, 1.0);
+    [originalImage drawInRect:CGRectMake(0, 0, smallSize.width, smallSize.height)];
+    thumbnail = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return thumbnail;
+}
+
+- (void)getImageWithLocalIdentifier:(NSString *)identifier {
+    PHAsset *asset = [PHAsset fetchAssetsWithLocalIdentifiers:@[identifier] options:nil].lastObject;
+    [[PHImageManager defaultManager]requestImageForAsset:asset targetSize:PHImageManagerMaximumSize contentMode:PHImageContentModeDefault options:nil resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+        if ([_delegate respondsToSelector:@selector(photoLibraryCenterDidGetImage:)]) {
+            [_delegate photoLibraryCenterDidGetImage:result];
+        }
+    }];
+}
+
+- (void)getImageDataWithLocalIdentifier:(NSString *)identifier { //得到原图data
+    PHAsset *asset = [PHAsset fetchAssetsWithLocalIdentifiers:@[identifier] options:nil].lastObject;
+    [[PHImageManager defaultManager]requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+        if ([_delegate respondsToSelector:@selector(photoLibraryCenterDidGetImageData:)]) {
+            [_delegate photoLibraryCenterDidGetImageData:imageData];
+        }
+    }];
+}
+
+- (NSString *)getLocalIdentifierFromPath:(NSString *)path {
+    NSRange beginRange = [path rangeOfString:@"?id="];
+    NSUInteger beginLocation = beginRange.location + 4;
+    NSRange endRange = [path rangeOfString:@"&ext"];
+    NSUInteger endLocation = endRange.location;
+    NSString *localIdentifier = [path substringWithRange:NSMakeRange(beginLocation, endLocation - beginLocation)];
+    return localIdentifier;
+}
 
 @end

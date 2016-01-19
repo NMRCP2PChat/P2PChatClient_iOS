@@ -9,7 +9,6 @@
 #import "AppDelegate.h"
 #import "DataManager.h"
 #import "AudioCenter.h"
-#import "PhotoLibraryCenter.h"
 #import "MessageProtocal.h"
 #import "Tool.h"
 #import "MessageQueueManager.h"
@@ -28,7 +27,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
    
     _audioCenter = [[AudioCenter alloc]init];
-    _photoLibraryCenter = [[PhotoLibraryCenter alloc]init];
     _messageProtocal = [[MessageProtocal alloc]init];
     _dataManager = [[DataManager alloc]init];
     _dataManager.context = _managedObjectContext;

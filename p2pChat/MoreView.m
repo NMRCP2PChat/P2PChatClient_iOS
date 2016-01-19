@@ -15,13 +15,15 @@
 #import "MessageQueueManager.h"
 #import "PhotoLibraryCenter.h"
 
-@interface MoreView () {
+@interface MoreView () <PhotoLibraryCenterDelegate> {
     int lastPacketID;
 }
+@property (strong, nonatomic) PhotoLibraryCenter *photoCenter;
 
 @property (strong, nonatomic) UIImagePickerController *imagePickerVC;
 @property (strong, nonatomic) UIImage *image;
-@property (strong, nonatomic) NSString *originalImagePath;
+@property (strong, nonatomic) NSMutableData *imageData;
+@property (strong, nonatomic) NSString *originalLocalIdentifier;
 @property (strong, nonatomic) NSString *thumbnailImagePath;
 @property (strong, nonatomic) UIView *previewView;
 
@@ -30,10 +32,14 @@
 
 @end
 
+static char picID = 0;// 图片标识
+
 @implementation MoreView
 - (void) awakeFromNib {
     _udpSocket = [P2PUdpSocket shareInstance];
     _tcpSocket = [P2PTcpSocket shareInstance];
+    _photoCenter = [[PhotoLibraryCenter alloc]init];
+    _photoCenter.delegate = self;
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(sendOriginalImage:) name:P2PUdpSocketReceiveACKNotification object:nil];
 }
@@ -64,27 +70,12 @@
 - (void)sendPic {
     [_previewView removeFromSuperview];
     [_imagePickerVC dismissViewControllerAnimated:YES completion:nil];
-    [self makeThumbnail];
-}
-
-- (void)cancel {
-    [_previewView removeFromSuperview];
-}
-
-- (void)makeThumbnail {
-    UIImage *thumbnail = nil;
-    CGFloat scale = MIN(150 / _image.size.width, 150 / _image.size.height);
-    CGSize smallSize = CGSizeMake(_image.size.width * scale, _image.size.height * scale);//缩略图大小
-    UIGraphicsBeginImageContextWithOptions(smallSize, NO, 1.0);
-    [_image drawInRect:CGRectMake(0, 0, smallSize.width, smallSize.height)];
-    thumbnail = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
+    UIImage *thumbnail = [_photoCenter makeThumbnail:_image];
     _thumbnailImagePath = [Tool getFileName:@"thumbnail" extension:@"png"];
-
     [UIImagePNGRepresentation(thumbnail) writeToFile:_thumbnailImagePath atomically:YES];
-    [[DataManager shareManager]savePhotoWithUserID:_userID time:[NSDate date] path:_originalImagePath thumbnail:_thumbnailImagePath isOut:YES];
-    
-    NSArray *arr = [[MessageProtocal shareInstance]archiveThumbnail:_thumbnailImagePath];
+    [[DataManager shareManager]savePhotoWithUserID:_userID time:[NSDate date] path:_originalLocalIdentifier thumbnail:_thumbnailImagePath isOut:YES];
+    picID++;
+    NSArray *arr = [[MessageProtocal shareInstance]archiveThumbnail:_thumbnailImagePath picID:picID];
     lastPacketID = [[MessageProtocal shareInstance]getPacketID:arr.lastObject];
     for (NSData *data in arr) {
         if (![_udpSocket sendData:data toHost:_ipStr port:UdpPort withTimeout:-1 tag:0]) {
@@ -95,6 +86,10 @@
     }
 }
 
+- (void)cancel {
+    [_previewView removeFromSuperview];
+}
+
 - (void)sendOriginalImage:(NSNotification *)notification {
     NSNumber *num = notification.object;
     if (num.intValue == lastPacketID) {
@@ -102,10 +97,10 @@
         if (![_tcpSocket connectToHost:_ipStr onPort:TcpPort error:&err]) {
             NSLog(@"MoreView connect host failed: %@", err);
         }
-        
-        NSData *originalImageData = UIImageJPEGRepresentation(_image, 5.0);
-        NSLog(@"image data length: %lu", (unsigned long)originalImageData.length);
-        [_tcpSocket writeData:originalImageData withTimeout:60 tag:0];
+        int pic = _userID.shortValue << 16 | picID;
+        NSData *picData = [NSData dataWithBytes:&pic length:sizeof(int)];
+        [_tcpSocket writeData:picData withTimeout:60 tag:1];
+        [_tcpSocket writeData:_imageData withTimeout:60 tag:0];
     }
 }
 
@@ -132,15 +127,23 @@
 #pragma mark - image picker delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(nonnull NSDictionary<NSString *,id> *)info {
     [self initPreview];
-    CGSize size = [UIScreen mainScreen].bounds.size;
     _image = info[UIImagePickerControllerOriginalImage];
     NSURL *url = info[UIImagePickerControllerReferenceURL];
-    _originalImagePath = [url absoluteString];
+    _originalLocalIdentifier = [_photoCenter getLocalIdentifierFromPath:[url absoluteString]];
+    CGSize size = [UIScreen mainScreen].bounds.size;
     CGFloat scale = MIN(size.width / _image.size.width, size.height / _image.size.height);
     UIImageView *imageView = [[UIImageView alloc]initWithImage:_image];
     imageView.frame = CGRectMake((size.width - _image.size.width * scale) / 2, (size.height - _image.size.height * scale) / 2, _image.size.width * scale, _image.size.height * scale);
     [_previewView addSubview:imageView];
     [picker.view addSubview:_previewView];
+
+    [_photoCenter getImageDataWithLocalIdentifier:_originalLocalIdentifier];
+}
+
+#pragma mark - photo library center delegate
+
+- (void)photoLibraryCenterDidGetImageData:(NSData *)imageData {
+    _imageData = (NSMutableData *)imageData;
 }
 
 @end
