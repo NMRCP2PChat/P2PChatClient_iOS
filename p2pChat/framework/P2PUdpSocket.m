@@ -119,13 +119,13 @@
             }
             break;
         case MessageProtocalTypePicture:
-            if (!_tcpSocket.isListen) {
+            if (!_tcpSocket.isOn) {
                 NSError *err = nil;
                 [_tcpSocket disconnect];
                 if (![_tcpSocket acceptOnPort:TcpPort error:&err]) {
                     NSLog(@"UdpSocket tcp socket listen failed: %@", err);
                 }
-                _tcpSocket.isListen = YES;
+                _tcpSocket.isOn = YES;
             }
             _buff[[NSNumber numberWithInt:pieceNum]] = bodyData;
             if (_buff.allKeys.count == wholeLength / PIECELENGTH + 2) {
@@ -138,7 +138,6 @@
                 
                 NSString *path = [Tool getFileName:@"thumbnail" extension:@"png"];
                 [wholeData writeToFile:path atomically:YES];
-                [_dataManager savePhotoWithUserID:[NSNumber numberWithUnsignedShort:userId] time:date path:nil thumbnail:path isOut:NO];
                 [_buff removeAllObjects];
                 _uncomparedPic[[NSNumber numberWithInt:picID]] = path;
             }
@@ -155,8 +154,8 @@
     return YES;
 }
 
-- (void)onUdpSocket:(AsyncUdpSocket *)sock didNotReceiveDataWithTag:(long)tag dueToError:(NSError *)error {
-    NSLog(@"didNotReceiveDataWithTag: %@", error);
+- (void)onUdpSocket:(AsyncUdpSocket *)sock didSendDataWithTag:(long)tag {
+    
 }
 
 @end

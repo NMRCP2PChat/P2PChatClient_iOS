@@ -8,10 +8,12 @@
 
 #import "AsyncSocket.h"
 
+#define P2PTcpSocketDidWritePicInfoNotification @"P2PTcpSocketDidWritePicInfoNotification"
+
 @interface P2PTcpSocket : AsyncSocket <AsyncSocketDelegate>
 
 + (instancetype)shareInstance;
 
-@property (assign, nonatomic) BOOL isListen;
+@property (assign, nonatomic) BOOL isOn;
 
 @end

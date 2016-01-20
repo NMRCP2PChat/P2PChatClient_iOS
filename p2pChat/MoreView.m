@@ -16,7 +16,7 @@
 #import "PhotoLibraryCenter.h"
 
 @interface MoreView () <PhotoLibraryCenterDelegate> {
-    int lastPacketID;
+    int imagePiecesNum;
 }
 @property (strong, nonatomic) PhotoLibraryCenter *photoCenter;
 
@@ -33,6 +33,7 @@
 @end
 
 static char picID = 0;// 图片标识
+static int imageSendedNum = 0;// 接收到了几个ack
 
 @implementation MoreView
 - (void) awakeFromNib {
@@ -41,7 +42,8 @@ static char picID = 0;// 图片标识
     _photoCenter = [[PhotoLibraryCenter alloc]init];
     _photoCenter.delegate = self;
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(sendOriginalImage:) name:P2PUdpSocketReceiveACKNotification object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(sendOriginalImageInfo:) name:P2PUdpSocketReceiveACKNotification object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(sendOriginalImage) name:P2PTcpSocketDidWritePicInfoNotification object:nil];
 }
 
 - (IBAction)pickPicture:(id)sender {
@@ -76,7 +78,7 @@ static char picID = 0;// 图片标识
     [[DataManager shareManager]savePhotoWithUserID:_userID time:[NSDate date] path:_originalLocalIdentifier thumbnail:_thumbnailImagePath isOut:YES];
     picID++;
     NSArray *arr = [[MessageProtocal shareInstance]archiveThumbnail:_thumbnailImagePath picID:picID];
-    lastPacketID = [[MessageProtocal shareInstance]getPacketID:arr.lastObject];
+    imagePiecesNum = (int)arr.count;
     for (NSData *data in arr) {
         if (![_udpSocket sendData:data toHost:_ipStr port:UdpPort withTimeout:-1 tag:0]) {
             NSLog(@"MoreView send pic failed");
@@ -90,9 +92,9 @@ static char picID = 0;// 图片标识
     [_previewView removeFromSuperview];
 }
 
-- (void)sendOriginalImage:(NSNotification *)notification {
-    NSNumber *num = notification.object;
-    if (num.intValue == lastPacketID) {
+- (void)sendOriginalImageInfo:(NSNotification *)notification {
+    imageSendedNum++;
+    if (imageSendedNum == imagePiecesNum) {
         NSError *err = nil;
         if (![_tcpSocket connectToHost:_ipStr onPort:TcpPort error:&err]) {
             NSLog(@"MoreView connect host failed: %@", err);
@@ -100,8 +102,13 @@ static char picID = 0;// 图片标识
         int pic = _userID.shortValue << 16 | picID;
         NSData *picData = [NSData dataWithBytes:&pic length:sizeof(int)];
         [_tcpSocket writeData:picData withTimeout:60 tag:1];
-        [_tcpSocket writeData:_imageData withTimeout:60 tag:0];
+        imageSendedNum = 0;
     }
+}
+
+- (void)sendOriginalImage {
+    NSLog(@"MoreView begin to write original image data, length: %lu", (unsigned long)_imageData.length);
+    [_tcpSocket writeData:_imageData withTimeout:60 tag:0];
 }
 
 - (void)initPreview {
