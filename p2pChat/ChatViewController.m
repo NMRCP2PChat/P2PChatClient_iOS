@@ -75,6 +75,7 @@
     // init table view
     _historyTableView.dataSource = self;
     _historyTableView.delegate = self;
+    _historyTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     _historyController = [[DataManager shareManager]getMessageByUserID:_userID];
     _historyControllerDelegate = [[MyFetchedResultsControllerDelegate alloc]initWithTableView:_historyTableView];
     _historyController.delegate = _historyControllerDelegate;

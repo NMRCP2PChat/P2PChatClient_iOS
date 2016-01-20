@@ -80,6 +80,7 @@
         if ([_delegate respondsToSelector:@selector(photoLibraryCenterDidGetImageData:)]) {
             [_delegate photoLibraryCenterDidGetImageData:imageData];
         }
+        NSLog(@"PhotoLibraryCenter get image data success");
     }];
 }
 

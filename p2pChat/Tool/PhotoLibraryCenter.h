@@ -12,8 +12,11 @@
 @protocol PhotoLibraryCenterDelegate <NSObject>
 
 @optional
+// getImageDataWithLocalIdentifier:成功后调用
 - (void)photoLibraryCenterDidGetImage:(UIImage *)image;
+// getImageDataWithLocalIdentifier:成功后调用
 - (void)photoLibraryCenterDidGetImageData:(NSData *)imageData;
+// saveImage:成功后调用
 - (void)photoLibraryCenterSaveImageWithLocalIdentifier:(NSString *)localIdentifier;
 
 @end

@@ -33,6 +33,7 @@
 @end
 
 static char picID = 0;// 图片标识
+#warning - 应当使用数组来存储缩略图的packetID，收到一个ack删除一个元素，直到数组为空，说明整个缩略图传送成功。使用简单的int类型会被其它ack混淆
 static int imageSendedNum = 0;// 接收到了几个ack
 
 @implementation MoreView
@@ -57,10 +58,18 @@ static int imageSendedNum = 0;// 接收到了几个ack
 }
 
 - (IBAction)pickPhoto:(id)sender {
+    if (_imagePickerVC == nil) {
+        _imagePickerVC = [[UIImagePickerController alloc]init];
+        _imagePickerVC.delegate = self;
+    }
+    _imagePickerVC.sourceType = UIImagePickerControllerSourceTypeCamera;
+    _imagePickerVC.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
+    UIViewController *superVC = [self viewController];
+    [superVC presentViewController:_imagePickerVC animated:YES completion:nil];
 }
 
-- (UIViewController*)viewController {
-    for (UIView* next = [self superview]; next; next = next.superview) {
+- (UIViewController *)viewController {
+    for (UIView *next = [self superview]; next; next = next.superview) {
         UIResponder* nextResponder = [next nextResponder];
         if ([nextResponder isKindOfClass:[UIViewController class]]) {
             return (UIViewController*)nextResponder;
@@ -70,7 +79,9 @@ static int imageSendedNum = 0;// 接收到了几个ack
 }
 
 - (void)sendPic {
-    [_previewView removeFromSuperview];
+    if (_previewView != nil) {
+        [_previewView removeFromSuperview];
+    }
     [_imagePickerVC dismissViewControllerAnimated:YES completion:nil];
     UIImage *thumbnail = [_photoCenter makeThumbnail:_image];
     _thumbnailImagePath = [Tool getFileName:@"thumbnail" extension:@"png"];
@@ -133,21 +144,31 @@ static int imageSendedNum = 0;// 接收到了几个ack
 
 #pragma mark - image picker delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(nonnull NSDictionary<NSString *,id> *)info {
-    [self initPreview];
     _image = info[UIImagePickerControllerOriginalImage];
-    NSURL *url = info[UIImagePickerControllerReferenceURL];
-    _originalLocalIdentifier = [_photoCenter getLocalIdentifierFromPath:[url absoluteString]];
-    CGSize size = [UIScreen mainScreen].bounds.size;
-    CGFloat scale = MIN(size.width / _image.size.width, size.height / _image.size.height);
-    UIImageView *imageView = [[UIImageView alloc]initWithImage:_image];
-    imageView.frame = CGRectMake((size.width - _image.size.width * scale) / 2, (size.height - _image.size.height * scale) / 2, _image.size.width * scale, _image.size.height * scale);
-    [_previewView addSubview:imageView];
-    [picker.view addSubview:_previewView];
-
-    [_photoCenter getImageDataWithLocalIdentifier:_originalLocalIdentifier];
+    if (_imagePickerVC.sourceType == UIImagePickerControllerSourceTypePhotoLibrary) {
+        [self initPreview];
+        
+        NSURL *url = info[UIImagePickerControllerReferenceURL];
+        _originalLocalIdentifier = [_photoCenter getLocalIdentifierFromPath:[url absoluteString]];
+        CGSize size = [UIScreen mainScreen].bounds.size;
+        CGFloat scale = MIN(size.width / _image.size.width, size.height / _image.size.height);
+        UIImageView *imageView = [[UIImageView alloc]initWithImage:_image];
+        imageView.frame = CGRectMake((size.width - _image.size.width * scale) / 2, (size.height - _image.size.height * scale) / 2, _image.size.width * scale, _image.size.height * scale);
+        [_previewView addSubview:imageView];
+        [picker.view addSubview:_previewView];
+        
+        [_photoCenter getImageDataWithLocalIdentifier:_originalLocalIdentifier];
+    } else {
+        [_photoCenter saveImage:_image];
+        [self sendPic];
+    }
 }
 
 #pragma mark - photo library center delegate
+- (void)photoLibraryCenterSaveImageWithLocalIdentifier:(NSString *)localIdentifier {
+    _originalLocalIdentifier = localIdentifier;
+    [_photoCenter getImageDataWithLocalIdentifier:localIdentifier];
+}
 
 - (void)photoLibraryCenterDidGetImageData:(NSData *)imageData {
     _imageData = (NSMutableData *)imageData;
