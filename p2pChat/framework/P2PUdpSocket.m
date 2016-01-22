@@ -143,7 +143,7 @@
             }
             break;
         case MessageProtocalTypeACK:
-            NSLog(@"received ack!");
+//            NSLog(@"received ack!");
             [_messageQueueManager messageSended:wholeLength];
             [[NSNotificationCenter defaultCenter]postNotificationName:P2PUdpSocketReceiveACKNotification object:[NSNumber numberWithUnsignedInt:wholeLength]];
             break;

@@ -22,7 +22,7 @@
 
 @property (strong, nonatomic) UIImagePickerController *imagePickerVC;
 @property (strong, nonatomic) UIImage *image;
-@property (strong, nonatomic) NSMutableData *imageData;
+@property (strong, nonatomic) NSData *imageData;
 @property (strong, nonatomic) NSString *originalLocalIdentifier;
 @property (strong, nonatomic) NSString *thumbnailImagePath;
 @property (strong, nonatomic) UIView *previewView;
@@ -106,20 +106,29 @@ static int imageSendedNum = 0;// 接收到了几个ack
 - (void)sendOriginalImageInfo:(NSNotification *)notification {
     imageSendedNum++;
     if (imageSendedNum == imagePiecesNum) {
+        NSLog(@"MoreView connect host and send original image info");
         NSError *err = nil;
+        if (_tcpSocket.isOn) {
+            [_tcpSocket disconnect];
+        }
         if (![_tcpSocket connectToHost:_ipStr onPort:TcpPort error:&err]) {
             NSLog(@"MoreView connect host failed: %@", err);
         }
         int pic = _userID.shortValue << 16 | picID;
         NSData *picData = [NSData dataWithBytes:&pic length:sizeof(int)];
-        [_tcpSocket writeData:picData withTimeout:60 tag:1];
+        [_tcpSocket writeData:picData withTimeout:60 tag:P2PTcpSocketTagTypeInfo];
         imageSendedNum = 0;
     }
 }
 
 - (void)sendOriginalImage {
+//    while (_imageData == nil) {
+//        NSLog(@"thread sleep for 0.5 sec");
+//        [NSThread sleepForTimeInterval:0.5];
+//    }
     NSLog(@"MoreView begin to write original image data, length: %lu", (unsigned long)_imageData.length);
-    [_tcpSocket writeData:_imageData withTimeout:60 tag:0];
+    [_tcpSocket writeData:_imageData withTimeout:60 tag:P2PTcpSocketTagTypeData];
+    _imageData = nil;
 }
 
 - (void)initPreview {
@@ -165,13 +174,12 @@ static int imageSendedNum = 0;// 接收到了几个ack
 }
 
 #pragma mark - photo library center delegate
-- (void)photoLibraryCenterSaveImageWithLocalIdentifier:(NSString *)localIdentifier {
+- (void)photoLibraryCenterSavedImageWithLocalIdentifier:(NSString *)localIdentifier {
     _originalLocalIdentifier = localIdentifier;
-    [_photoCenter getImageDataWithLocalIdentifier:localIdentifier];
 }
 
 - (void)photoLibraryCenterDidGetImageData:(NSData *)imageData {
-    _imageData = (NSMutableData *)imageData;
+    _imageData = imageData;
 }
 
 @end

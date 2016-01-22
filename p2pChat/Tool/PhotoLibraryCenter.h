@@ -14,10 +14,10 @@
 @optional
 // getImageDataWithLocalIdentifier:成功后调用
 - (void)photoLibraryCenterDidGetImage:(UIImage *)image;
-// getImageDataWithLocalIdentifier:成功后调用
+// getImageDataWithLocalIdentifier:成功后调用，saveImage:成功后调用
 - (void)photoLibraryCenterDidGetImageData:(NSData *)imageData;
 // saveImage:成功后调用
-- (void)photoLibraryCenterSaveImageWithLocalIdentifier:(NSString *)localIdentifier;
+- (void)photoLibraryCenterSavedImageWithLocalIdentifier:(NSString *)localIdentifier;
 
 @end
 

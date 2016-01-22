@@ -12,6 +12,7 @@
 @interface PhotoLibraryCenter ()
 
 @property (strong, nonatomic) PHAssetCollection *collection;
+@property (strong, nonatomic) NSString *localIdentifier;
 
 @end
 
@@ -45,12 +46,16 @@
         PHAssetChangeRequest *createAssetRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
         PHAssetCollectionChangeRequest *albumChangeRequest = [PHAssetCollectionChangeRequest changeRequestForAssetCollection:_collection];
         PHObjectPlaceholder *assetPlaceholder = [createAssetRequest placeholderForCreatedAsset];
-        if ([_delegate respondsToSelector:@selector(photoLibraryCenterSaveImageWithLocalIdentifier:)]) {
-            [_delegate photoLibraryCenterSaveImageWithLocalIdentifier:assetPlaceholder.localIdentifier];
-        }
+        _localIdentifier = [assetPlaceholder.localIdentifier substringWithRange:NSMakeRange(0, 36)];
         [albumChangeRequest addAssets:@[assetPlaceholder]];
+        if ([_delegate respondsToSelector:@selector(photoLibraryCenterSavedImageWithLocalIdentifier:)]) {
+            [_delegate photoLibraryCenterSavedImageWithLocalIdentifier:_localIdentifier];
+        }
     } completionHandler:^(BOOL success, NSError *error) {
         NSLog(@"Finished adding asset. %@", (success ? @"Success" : error));
+        if ([_delegate respondsToSelector:@selector(photoLibraryCenterDidGetImageData:)]) {
+            [self getImageDataWithLocalIdentifier:_localIdentifier];
+        }        
     }];
 }
 

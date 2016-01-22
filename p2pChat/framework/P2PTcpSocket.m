@@ -22,6 +22,8 @@
 
 @end
 
+static char ack = 1;
+
 @implementation P2PTcpSocket
 
 - (id) init {
@@ -63,7 +65,7 @@
 
 - (void)onSocket:(AsyncSocket *)sock didAcceptNewSocket:(AsyncSocket *)newSocket {
     NSLog(@"didAcceptNewSocket");
-    [newSocket readDataWithTimeout:60 tag:1];
+    [newSocket readDataWithTimeout:60 tag:P2PTcpSocketTagTypeInfo];
     _isOn = YES;
 }
 
@@ -80,34 +82,44 @@
 
 - (void)onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
     NSLog(@"did read data, length: %lu, tag: %ld", (unsigned long)data.length, tag);
+    char tmp;
     switch (tag) {
-        case 0:
+        case P2PTcpSocketTagTypeData:
             [_buff appendData:data];
+            [sock readDataWithTimeout:60 tag:P2PTcpSocketTagTypeData];
             break;
-        case 1:
+        case P2PTcpSocketTagTypeInfo:
             [data getBytes:&picID length:sizeof(int)];
-        default:
+            [sock writeData:[NSData dataWithBytes:&ack length:sizeof(char)] withTimeout:10 tag:P2PTcpSocketTagTypeAck];
+            [sock readDataWithTimeout:60 tag:P2PTcpSocketTagTypeData];
+            break;
+        case P2PTcpSocketTagTypeAck:
+            [data getBytes:&tmp length:sizeof(char)];
+            if (tmp == ack) {
+                [[NSNotificationCenter defaultCenter]postNotificationName:P2PTcpSocketDidWritePicInfoNotification object:nil];
+                tmp = 0;
+            }
             break;
     }
-    [sock readDataWithTimeout:60 tag:0];
 }
 
 - (void)onSocket:(AsyncSocket *)sock didWriteDataWithTag:(long)tag {
     NSLog(@"did Write Data With Tag: %ld", tag);
     switch (tag) {
-        case 0:
+        case P2PTcpSocketTagTypeData:
             [sock disconnect];
             break;
-        case 1: // 图片开头信息
-            [[NSNotificationCenter defaultCenter]postNotificationName:P2PTcpSocketDidWritePicInfoNotification object:nil];
+        case P2PTcpSocketTagTypeInfo:
+            [sock readDataWithTimeout:60 tag:P2PTcpSocketTagTypeAck];
             break;
-        default:
+        case P2PTcpSocketTagTypeAck:
+            [sock readDataWithTimeout:60 tag:P2PTcpSocketTagTypeData];
             break;
     }
 }
 
 #pragma mark - photo library center delegate
-- (void)photoLibraryCenterSaveImageWithLocalIdentifier:(NSString *)localIdentifier {
+- (void)photoLibraryCenterSavedImageWithLocalIdentifier:(NSString *)localIdentifier {
     NSString *thumbnailPath = [[P2PUdpSocket shareInstance]getAndRemoveThumbnailPath:picID];
     [[DataManager shareManager]savePhotoWithUserID:[NSNumber numberWithUnsignedShort:picID >> 16] time:[NSDate date] path:localIdentifier thumbnail:thumbnailPath isOut:NO];
 }

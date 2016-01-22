@@ -46,11 +46,11 @@
     if (_sendingQueue.allKeys.count == 0) {
         [_timer setFireDate:[NSDate distantFuture]];
     }
-    NSLog(@"sending queue number: %lu", (unsigned long)_sendingQueue.allKeys.count);
+//    NSLog(@"sending queue number: %lu", (unsigned long)_sendingQueue.allKeys.count);
 }
 
 - (void)sendAgain {
-    NSLog(@"MessageQueueManager send again");
+//    NSLog(@"MessageQueueManager send again");
     NSArray *keys = _sendingQueue.allKeys;
     for (NSNumber *key in keys) {
         NSDictionary *dic = _sendingQueue[key];
