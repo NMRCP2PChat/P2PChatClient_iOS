@@ -15,6 +15,7 @@
 @class MessageProtocal;
 @class DataManager;
 @class MessageQueueManager;
+@class MyXMPP;
 
 #define UdpPort 1234
 #define TcpPort 2345
@@ -36,6 +37,7 @@
 @property (readonly, strong, nonatomic) AudioCenter *audioCenter;
 @property (readonly, strong, nonatomic) MessageProtocal *messageProtocal;
 @property (readonly, strong, nonatomic) MessageQueueManager *messageQueueManager;
+@property (readonly, strong, nonatomic) MyXMPP *myXMPP;
 
 @end
 

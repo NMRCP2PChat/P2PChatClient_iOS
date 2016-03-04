@@ -18,10 +18,4 @@
     [super viewDidLoad];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    if (self.tabBarController.tabBar.hidden == NO) {
-        self.tabBarController.tabBar.hidden = YES;
-    }
-}
-
 @end

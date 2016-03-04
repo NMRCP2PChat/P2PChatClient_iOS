@@ -28,8 +28,7 @@
     if ([[NSUserDefaults standardUserDefaults]stringForKey:@"name"] == nil) {
         [self performSegueWithIdentifier:@"login" sender:nil];
     }
-    
-    [self performSegueWithIdentifier:@"chat" sender:nil];
+//    [self performSegueWithIdentifier:@"chat" sender:nil];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

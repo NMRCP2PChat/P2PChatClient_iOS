@@ -1,18 +1,18 @@
 //
-//  RegisterViewController.m
+//  MyViewController.m
 //  p2pChat
 //
-//  Created by xiaokun on 16/1/4.
+//  Created by xiaokun on 16/3/4.
 //  Copyright © 2016年 xiaokun. All rights reserved.
 //
 
-#import "RegisterViewController.h"
+#import "MyViewController.h"
 
-@interface RegisterViewController ()
+@interface MyViewController ()
 
 @end
 
-@implementation RegisterViewController
+@implementation MyViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

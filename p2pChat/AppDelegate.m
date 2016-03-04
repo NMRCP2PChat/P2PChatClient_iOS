@@ -15,6 +15,7 @@
 #import "P2PUdpSocket.h"
 #import "P2PTcpSocket.h"
 #import "AsyncSocket.h"
+#import "MyXMPP.h"
 
 @interface AppDelegate ()
 
@@ -30,6 +31,7 @@
     _messageProtocal = [[MessageProtocal alloc]init];
     _dataManager = [[DataManager alloc]init];
     _dataManager.context = _managedObjectContext;
+    _myXMPP = [[MyXMPP alloc]init];
     
     _tcpSocket = [[P2PTcpSocket alloc]init];
     _udpSocket = [[P2PUdpSocket alloc]init];

@@ -24,11 +24,18 @@ typedef NS_ENUM (char, MessageProtocalType) {
 
 + (instancetype)shareInstance;
 
-- (NSData *)archiveACK:(unsigned char)packetID;
+@end
 
+@interface MessageProtocal (Archive)
+
+- (NSData *)archiveACK:(unsigned char)packetID;
 - (NSData *)archiveText:(NSString *)body;
 - (NSArray *)archiveRecord:(NSString *)path during:(NSNumber *)during;
 - (NSArray *)archiveThumbnail:(NSString *)path picID:(char)picID;
+
+@end
+
+@interface MessageProtocal (Unarchive)
 
 - (int)getPacketID:(NSData *)data;// 包id
 - (unsigned short)getUserID:(NSData *)data;
